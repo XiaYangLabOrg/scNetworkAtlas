@@ -273,6 +273,9 @@ convertToMatrix <- function(df){
 # @param DEG_df - can be either 'MODULE' 'GENE' file or DEG output from Seurat with genes in 'GENE' column
 # @param MODULE_column - if 'Cell_type' is not the desired "module" to run the analysis, set the desired module column here
 # @param resources_path - path to resources directory with txt files of resources in 'module' 'gene' format
+# @param heatmap - saves heatmap if TRUE
+# @param return_nonconcat - concatenates all module enrichments if TRUE
+# @param remove_dat - remove .dat intermediate file after use if TRUE
 # outputs the .txt reports for each "module"
 # outputs an example heatmap of the top 50 consistent pathways
 # returns a dataframe detailing each pathway enrichment result
@@ -290,7 +293,8 @@ makePathwayEnrichmentDf <- function(DEG_df,
                                     logFC_threshold=0.1, 
                                     min_max=NULL,
                                     heatmap=FALSE,
-                                    return_nonconcat=TRUE){
+                                    return_nonconcat=TRUE.
+                                    remove_dat=TRUE){
   
   # trim DEG output if necessary 
   if(length(colnames(DEG_df))>2){
@@ -420,7 +424,9 @@ makePathwayEnrichmentDf <- function(DEG_df,
       }
       total = total[order(total$nOverlap, decreasing = TRUE),]
       write.table(total, paste0(output_Dir,"/",module, ".txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-    
+      if (remove_dat){
+        file.remove(paste0(output_Dir,"/",module, ".dat"))
+      }
     }else{
       cat(paste0(output_Dir,"/",module, ".txt already exists ... skipping \n"))
     }

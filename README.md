@@ -84,6 +84,11 @@ bash submission_scripts/submit_run_genemembership.sh
 ```
 
 ## 06. submit_run_annotations.sh
+Must have R in your environment.
+```
+conda activate enrichr
+```
+
 inputs:
 - mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
 - modules_dir: directory of gene memberships created in previous script relative to atlas root directory (e.g. gene_memberships)
@@ -95,6 +100,10 @@ bash submission_scripts/submit_run_annotations.sh
 ```
 
 ## 07. submit_run_processannotations.sh
+Must have R in your environment.
+```
+conda activate enrichr
+```
 inputs:
 - mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
 - intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored

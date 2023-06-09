@@ -29,11 +29,11 @@ then
     find ./ | grep h5ad | awk -F'.h5ad' '{print $1}' > ${supercell_file}
 fi
 cd ../
-if [[ {$mode} == "test" ]]
+if [[ "${mode}" == "test" ]]
 then
     PARAMETERS=('0.01')
     num_supercells=1
-elif [[ {$mode} == "default" ]]
+elif [[ "${mode}" == "default" ]]
     PARAMETERS=('0.002' '0.005' '0.007' '0.01' '0.03' '0.05')
     num_supercells=$(cat ${supercell_dir}/${supercell_file} | wc -l)
 else
@@ -46,7 +46,7 @@ echo $num_supercells
 
 for i in "${PARAMETERS[@]}"
 do
-    qsub -t 1:${num_supercells} shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir}
+    qsub -t 1:${num_supercells} shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman}
 
 done
 

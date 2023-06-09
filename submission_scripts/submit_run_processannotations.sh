@@ -19,10 +19,10 @@ fi
 cd ../
 
 
-if [[ {$mode} == "test" ]]
+if [[ "${mode}" == "test" ]]
 then
     num_supercells=1
-elif [[ {$mode} == "default" ]]
+elif [[ "${mode}" == "default" ]]
     num_supercells=$(cat ${supercell_dir}/${supercell_file} | wc -l)
 else
     echo "mode argument must be test or default"

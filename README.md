@@ -6,7 +6,7 @@ git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 cd scNetworkAtlas
 conda env create -n scing --file install/scing.environment.yml 
 conda activate scing
-$pip install pyitlib  
+pip install pyitlib  
 ```
 
 If you want to use the AUCell from SCENIC for graph based dimensionality reduction you must install pyscenic  

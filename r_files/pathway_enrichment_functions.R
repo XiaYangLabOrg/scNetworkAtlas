@@ -293,7 +293,7 @@ makePathwayEnrichmentDf <- function(DEG_df,
                                     logFC_threshold=0.1, 
                                     min_max=NULL,
                                     heatmap=FALSE,
-                                    return_nonconcat=TRUE.
+                                    return_nonconcat=TRUE,
                                     remove_dat=TRUE){
   
   # trim DEG output if necessary 

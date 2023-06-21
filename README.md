@@ -15,8 +15,8 @@ pip install pyscenic
 ```
 If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr. 
 ```  
-$conda env create -n enrichr --file install/pathway.environment.yml
-$conda activate enrichr
+conda env create -n enrichr --file install/pathway.environment.yml
+conda activate enrichr
 ```
 
 ## Create a directory for each atlas

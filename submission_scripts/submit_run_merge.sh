@@ -12,7 +12,6 @@ then
     find ./ | grep h5ad | awk -F'.h5ad' '{print $1}' > ${supercell_file}
 fi
 cd ../
-supercell_file="supercells/supercells.txt"
 
 num_lines=$(cat ${supercell_dir}/${supercell_file} | wc -l)
 echo $num_lines

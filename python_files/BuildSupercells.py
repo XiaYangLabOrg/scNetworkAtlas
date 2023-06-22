@@ -43,5 +43,5 @@ adata_merged = supercell_pipeline(adata,
                                   npcs=20,
                                   ncell=500,
                                   verbose=True)
-os.makedirs('../merged_adata',exist_ok=True)
-adata_merged.write('../merged_adata/'+str(outfile)+'.h5ad')
+os.makedirs('../supercells',exist_ok=True)
+adata_merged.write('../supercells/'+str(outfile)+'.h5ad')

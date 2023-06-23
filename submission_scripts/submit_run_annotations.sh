@@ -6,9 +6,10 @@
 ##### INPUTS #####
 
 #Set mode
-mode="test" # or default
-dbs="/u/scratch/m/mikechen/pathway_databases/genesets/human" # or mouse
-
+mode="test" # test or default
+dbs="/u/scratch/m/mikechen/pathway_databases/genesets/human_toy" # human or mouse
+# number of cores to run job
+num_cores=12
 ###################
 # Create folders
 mkdir pathway_annotations
@@ -46,7 +47,7 @@ echo $num_supercells
 
 for i in "${PARAMETERS[@]}"
 do
-    qsub -t 1:${num_supercells} shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman}
+    qsub -t 1:${num_supercells} -pe shared ${num_cores} shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
 
 done
 

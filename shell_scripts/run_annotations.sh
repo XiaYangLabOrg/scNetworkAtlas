@@ -1,4 +1,4 @@
-#$ -cwd -V -N ANNOTATIONS -l h_data=16G,h_rt=23:00:00 -pe shared 2 -M eplau -m a -j y -o jobout/annotations.$JOB_ID
+#$ -cwd -V -N ANNOTATIONS -l h_data=12G,h_rt=23:00:00 -M eplau -m a -j y -o jobout/annotations.$JOB_ID
 
 # . /u/local/Modules/default/init/modules.sh
 
@@ -11,6 +11,7 @@ res=$3
 db=$4
 intermediate_dir=$5
 convertToHuman=$6
+num_cores=$7
 # final_dir=$6
 
 echo $supercell_file
@@ -33,7 +34,7 @@ do
 			sleep 5m
 			exit
 		fi
-		Rscript --vanilla ./r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${res} ${db} ${intermediate_dir} ${convertToHuman} # ${final_dir}
+		Rscript --vanilla ./r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${res} ${db} ${intermediate_dir} ${convertToHuman} ${num_cores} # ${final_dir}
 		echo "sleeping"
 		sleep 5m
 		exit

@@ -17,6 +17,11 @@ If you want to perform pathway enrichment analysis with enrichr you must install
 ```  
 conda env create -n enrichr --file install/pathway.environment.yml
 conda activate enrichr
+# install inside R
+R
+> install.packages('foreach')
+> install.packages('doParallel')
+> quit()
 ```
 
 ## Create a directory for each atlas

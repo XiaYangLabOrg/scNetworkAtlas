@@ -9,6 +9,7 @@ res <- args[3]
 dbs <- args[4]
 output_directory <- args[5]
 convertToHuman <- ifelse(args[6]=='True',T,F)
+num_cores <- as.numeric(args[7])
 # final_directory <- args[6]
 
 print("processed all parameters!")
@@ -17,6 +18,8 @@ print(paste0("parameter 2 is ", cell_type))
 print(paste0("parameter 3 is ", res))
 print(paste0("parameter 4 is ", dbs))
 print(paste0("parameter 5 is ", output_directory))
+print(paste0("parameter 6 is ", num_cores))
+
 # print(paste0("parameter 6 is ", final_directory))
 
 cell_type = sapply(strsplit(cell_type, "/"), tail, 1)
@@ -50,7 +53,12 @@ modules <- modules[which(modules$cluster_membership %in% filtered_modules),]
 # }
 
  # create pathway enrichment dataframe
-makePathwayEnrichmentDf(modules, dbs, output_Dir=output_directory, convertToHuman=convertToHuman)
+
+t <- system.time({
+  makePathwayEnrichmentDf(modules, dbs, output_Dir=output_directory, convertToHuman=convertToHuman, num_cores=num_cores)
+})
+cat('time elapsed: \n')
+print(t)
 #print("created pathway enrichment dfs!")
 
 

@@ -1,6 +1,8 @@
 # not good commenting right now and flexibility. will update later
 
 library(ggplot2)
+library(foreach)
+library(doParallel)
 # library(biomaRt)
 
 tool.read <- function(file, vars=NULL) {
@@ -273,6 +275,7 @@ convertToMatrix <- function(df){
 # @param DEG_df - can be either 'MODULE' 'GENE' file or DEG output from Seurat with genes in 'GENE' column
 # @param MODULE_column - if 'Cell_type' is not the desired "module" to run the analysis, set the desired module column here
 # @param resources_path - path to resources directory with txt files of resources in 'module' 'gene' format
+# @param num_cores - number of cores for parallel computing (default 1, no parallel computing)
 # @param heatmap - saves heatmap if TRUE
 # @param return_nonconcat - concatenates all module enrichments if TRUE
 # @param remove_dat - remove .dat intermediate file after use if TRUE
@@ -292,6 +295,7 @@ makePathwayEnrichmentDf <- function(DEG_df,
                                     FDR_threshold=0.05, 
                                     logFC_threshold=0.1, 
                                     min_max=NULL,
+                                    num_cores=1,
                                     heatmap=FALSE,
                                     return_nonconcat=TRUE,
                                     remove_dat=TRUE){
@@ -334,12 +338,14 @@ makePathwayEnrichmentDf <- function(DEG_df,
   DEG_df$MODULE <- gsub(" ","_", DEG_df$MODULE)
   
   # run pathway enrichment ------------------------------------------------------------------------------------------
+  # register local cluster of parallel computing cores
+  registerDoParallel(num_cores)
   list_of_pathway_databases = list.files(path = resources_path, pattern = "*.txt", full.names = TRUE)
   ifelse(!dir.exists(file.path(output_Dir)), dir.create(file.path(output_Dir),recursive = T), FALSE)
   result = list()
   all_result = list()
   annotations = c()
-  for(module in unique(DEG_df$MODULE)){
+  foreach(module=unique(DEG_df$MODULE), .combine=c) %dopar% {
     if (!file.exists(paste0(output_Dir,"/",module, ".txt"))){
       cat(module, "\n")
       deg_list = DEG_df[DEG_df$MODULE==module,] # why is this creating NAs?
@@ -433,6 +439,7 @@ makePathwayEnrichmentDf <- function(DEG_df,
   }
 
     # -------------------- for loop ends here ----------------------------------------------------------
+  stopImplicitCluster() # clean up cluster
   if (return_nonconcat){
     return()
   }

@@ -7,7 +7,7 @@
 supercell_dir="supercells"
 supercell_file="supercells.txt"
 #Set mode
-rerun="False"
+rerun="False" # or True
 mode="test" # test or default
 dbs="/u/scratch/m/mikechen/pathway_databases/genesets/human_toy" # human or mouse
 # number of cores to run job

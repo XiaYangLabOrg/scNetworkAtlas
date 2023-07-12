@@ -95,6 +95,7 @@ conda activate enrichr
 ```
 
 inputs:
+- rerun: set to "True" or "False" depending on whether you are rerunning jobs that did not finish in time.
 - mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
 - modules_dir: directory of gene memberships created in previous script relative to atlas root directory (e.g. gene_memberships)
 - dbs: path to all pathway enrichment databases
@@ -112,7 +113,7 @@ conda activate enrichr
 inputs:
 - mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
 - intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- final dir: directory where files of annotations of all modules within each resolution will be stored
+- final_dir: directory where files of annotations of all modules within each resolution will be stored
 ```
 bash submission_scripts/submit_run_processannotations.sh
 ```

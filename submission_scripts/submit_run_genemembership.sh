@@ -2,7 +2,7 @@
 
 # Run from root directory /path/to/atlas/
 ##### INPUTS #####
-PARAMETERS=('0.002' '0.005' '0.007' '0.01' '0.03' '0.05')
+PARAMETERS=('0.002' '0.005' '0.007' '0.01')
 ##################
 
 supercell_dir="supercells"

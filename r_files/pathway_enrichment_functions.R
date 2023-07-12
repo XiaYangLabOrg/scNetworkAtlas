@@ -272,6 +272,10 @@ convertToMatrix <- function(df){
   return(DEG_mat)
 }
 
+# takes in list of values, a row of a dataframe, performs enrichment p-value calculation using phyper
+hypergeom_pval <- function(values, overlap_col, num_pathway_gene_col, total_num_genes_col, module_size_col){
+  return(phyper(as.numeric(values[overlap_col])-1, as.numeric(values[num_pathway_gene_col]), as.numeric(values[total_num_genes_col])-as.numeric(values[num_pathway_gene_col]), as.numeric(values[module_size_col]), lower.tail=FALSE))
+}
 # @param DEG_df - can be either 'MODULE' 'GENE' file or DEG output from Seurat with genes in 'GENE' column
 # @param MODULE_column - if 'Cell_type' is not the desired "module" to run the analysis, set the desired module column here
 # @param resources_path - path to resources directory with txt files of resources in 'module' 'gene' format
@@ -293,11 +297,13 @@ makePathwayEnrichmentDf <- function(DEG_df,
                                     addlogFC=FALSE, 
                                     MODULE_column=NULL, 
                                     FDR_threshold=0.05, 
-                                    logFC_threshold=0.1, 
+                                    logFC_threshold=0.1,
+                                    n_genes_in_dataset=20000,
                                     min_max=NULL,
                                     num_cores=1,
                                     heatmap=FALSE,
                                     return_nonconcat=TRUE,
+                                    save_temp_dat=TRUE,
                                     remove_dat=TRUE){
   
   # trim DEG output if necessary 
@@ -353,8 +359,8 @@ makePathwayEnrichmentDf <- function(DEG_df,
       deg_list[["gene"]] <- deg_list$GENE
       deg_list[["module"]] <- deg_list$MODULE
       deg_list <- deg_list[,c("module","gene")]
-      unique_module1 <- unique(deg_list$module)
-      module1_len <- length(unique(deg_list$module))
+      unique_module1 <- unique(deg_list$module) # name of modules in file
+      module1_len <- length(unique(deg_list$module)) # number of modules in file
       x <- list()
       for(z in 1:length(list_of_pathway_databases)){
         pathway_database <- list_of_pathway_databases[z]
@@ -363,10 +369,10 @@ makePathwayEnrichmentDf <- function(DEG_df,
         database_name = unlist(strsplit(database_name, ".txt"))[1]
         print(database_name)
         
-        Module2 <- tool.read(pathway_database)
-        Unique_module2 <- unique(Module2$module)
+        Module2 <- tool.read(pathway_database) # pathway database
+        Unique_module2 <- unique(Module2$module) # names of pathways in database
         
-        Module2_len <- length(unique(Module2$module))
+        Module2_len <- length(unique(Module2$module)) # number of pathways in database
         
         data_matrix_for_enrichment <- data.frame()
         List_initial <- 1
@@ -378,9 +384,9 @@ makePathwayEnrichmentDf <- function(DEG_df,
           Overlapped_genes <- intersect(deg_list$gene[which(match(deg_list$module, unique_module1)>0)],
                                         Module2$gene[which(match(Module2$module, Unique_module2[k])>0)])
           data_matrix_for_enrichment[List_initial,3] <- length(Overlapped_genes)
-          data_matrix_for_enrichment[List_initial,4] <- length(Module2$gene[which(match(Module2$module, Unique_module2[k])>0)])
+          data_matrix_for_enrichment[List_initial,4] <- length(Module2$gene[which(match(Module2$module, Unique_module2[k])>0)]) # number of pathway genes
           
-          data_matrix_for_enrichment[List_initial, 5] <- 20000
+          data_matrix_for_enrichment[List_initial, 5] <- n_genes_in_dataset
           data_matrix_for_enrichment[List_initial,6] <- Unique_module2[k]
           
           if(length(Overlapped_genes)){
@@ -393,24 +399,28 @@ makePathwayEnrichmentDf <- function(DEG_df,
           List_initial=List_initial + 1
         }
         
-        write.table(data_matrix_for_enrichment, file = paste0(output_Dir,"/",module,".dat"), quote = FALSE, sep = "\t",
-                    row.names = FALSE, col.names = FALSE)
-        # record_mat <- read.table(paste0("Csvs/pathway_enrichment/temp1.",module,".dat"))
-        record_mat <- read.table(paste0(output_Dir,"/",module,".dat"))
-        record_length <- dim(record_mat)
-        enrichment_score <- data.frame()
-        
-        for(i in 1:record_length[1]){
-          enrichment_score[i,1] <- record_mat[i,1]
-          enrichment_score[i,2] <- phyper(record_mat[i,3], record_mat[i,4], record_mat[i,5]-record_mat[i,4], record_mat[i,2], lower.tail = FALSE)
-          enrichment_score[i,3] <- record_mat[i,3]/record_mat[i,2]*record_mat[i,5]/record_mat[i,4]
-          enrichment_score[i,4] <- 0
-          enrichment_score[i,5]<-record_mat[i,8]
-          enrichment_score[i,6]<-record_mat[i,6]
-          enrichment_score[i,7]<-record_mat[i,3]
-          enrichment_score[i,8]<-record_mat[i,7]
+        if(save_temp_dat){
+          write.table(data_matrix_for_enrichment, file = paste0(output_Dir,"/",module,".dat"), quote = FALSE, sep = "\t",
+          row.names = FALSE, col.names = FALSE)
+          # record_mat <- read.table(paste0(output_Dir,"/",module,".dat"))
         }
+        record_length <- dim(data_matrix_for_enrichment)
+        enrichment_score <- data.frame(matrix(nrow=nrow(data_matrix_for_enrichment), ncol=8))
+        enrichment_score[,c(1,5:8)] <- data_matrix_for_enrichment[,c(1,8,6,3,7)]
+        enrichment_score[,3] <- data_matrix_for_enrichment[,3]/data_matrix_for_enrichment[,2] * data_matrix_for_enrichment[,5]/data_matrix_for_enrichment[,4]
+        enrichment_score[,2] <- apply(data_matrix_for_enrichment,MARGIN=1,hypergeom_pval, overlap_col=3, num_pathway_gene_col=4, total_num_genes_col=5, module_size_col=2)
         enrichment_score[,4]<-p.adjust(enrichment_score[,2], 'BH')
+        # for(i in 1:record_length[1]){
+        #   enrichment_score[i,1] <- record_mat[i,1]
+        #   enrichment_score[i,2] <- phyper(record_mat[i,3], record_mat[i,4], record_mat[i,5]-record_mat[i,4], record_mat[i,2], lower.tail = FALSE)
+        #   enrichment_score[i,3] <- record_mat[i,3]/record_mat[i,2]*record_mat[i,5]/record_mat[i,4]
+        #   enrichment_score[i,4] <- 0
+        #   enrichment_score[i,5]<-record_mat[i,8]
+        #   enrichment_score[i,6]<-record_mat[i,6]
+        #   enrichment_score[i,7]<-record_mat[i,3]
+        #   enrichment_score[i,8]<-record_mat[i,7]
+        # }
+        
         colnames(enrichment_score) <- c("Module","Pval","Enrichment","FDR","PathwaySource","Pathway","nOverlap","Overlap")
         enrichment_score$ModuleGeneCount = length(deg_list$gene)
         enrichment_score <- enrichment_score[order(enrichment_score$FDR),]
@@ -430,7 +440,7 @@ makePathwayEnrichmentDf <- function(DEG_df,
       }
       total = total[order(total$nOverlap, decreasing = TRUE),]
       write.table(total, paste0(output_Dir,"/",module, ".txt"), row.names = FALSE, quote = FALSE, sep = "\t")
-      if (remove_dat){
+      if (remove_dat & save_temp_dat){
         file.remove(paste0(output_Dir,"/",module, ".dat"))
       }
     }else{

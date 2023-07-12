@@ -37,37 +37,15 @@ modules$cluster_membership <- paste0(res,'_',modules$cluster_membership)
 module_sizes <- table(modules$cluster_membership)
 filtered_modules <- names(module_sizes[which(module_sizes>10 & module_sizes < 300)])
 modules <- modules[which(modules$cluster_membership %in% filtered_modules),]
-# for(i in 1:6) {
-#     new_modules <- read.table(list_of_module_files[i],sep=',',header=TRUE)
 
-#     #change the columns
-#     new_modules <- new_modules[c("cluster_membership", "genes")]
-
-#     #change the module names
-#     res <- strsplit(toString(strsplit(list_of_module_files[i], ".csv.gz")), ".gene_membership.")
-#     res <- sapply(res, tail, 1)
-#     new_modules$cluster_membership <- paste0(res,'_',new_modules$cluster_membership)
-
-#     modules <- rbind(modules, new_modules)
-    
-# }
-
- # create pathway enrichment dataframe
-
+# create pathway enrichment dataframe
 t <- system.time({
-  makePathwayEnrichmentDf(modules, dbs, output_Dir=output_directory, convertToHuman=convertToHuman, num_cores=num_cores)
+  makePathwayEnrichmentDf(modules, dbs, output_Dir=output_directory, convertToHuman=convertToHuman, num_cores=num_cores, save_temp_dat=F)
 })
 cat('time elapsed: \n')
 print(t)
-#print("created pathway enrichment dfs!")
 
-
-
-######################################################
-### Post-Processing to be put in a separate script ###
-######################################################
-# 
-#  # edit pathway enrichment dataframes
+# edit pathway enrichment dataframes
 pathway_df = data.frame(stringsAsFactors = FALSE)
 counter = 0
 for(m in unique(modules$cluster_membership)){
@@ -81,17 +59,5 @@ pathway_df$res <- res
 
 outfile <- paste0(output_directory,res,"_full.txt")
 write.table(pathway_df, outfile, quote=F, sep='\t', row.names=F)
-
-# #TURN ALL ANNOTATIONS INTO ONE FILE FOR WHOLE CELL TYPE
-# list_of_annotation_files = list.files(path = output_directory, pattern = "*.txt", full.names = TRUE)
-# annotations <- data.frame(matrix(nrow=0,ncol=10))
-
-# for(i in 1:(length(list_of_annotation_files))) {
-#     new_annotations <- read.table(list_of_annotation_files[i],header=TRUE)
-#     annotations <- rbind(annotations, new_annotations) 
-# }
-
-# file_name <- paste0(final_directory, "/", cell_type, ".txt")
-# write.table(annotations, file_name, quote = FALSE, sep = "\t", row.names = FALSE)
 
 

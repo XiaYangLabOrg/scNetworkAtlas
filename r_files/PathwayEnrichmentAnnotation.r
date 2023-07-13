@@ -1,5 +1,5 @@
 #load lab functions
-source('r_files/pathway_enrichment_functions.R')
+  source('r_files/pathway_enrichment_functions.R')
 
 args = commandArgs(trailingOnly=TRUE)
 #set user input parameters
@@ -60,4 +60,7 @@ pathway_df$res <- res
 outfile <- paste0(output_directory,res,"_full.txt")
 write.table(pathway_df, outfile, quote=F, sep='\t', row.names=F)
 
-
+# remove temp files
+delete_files <- list.files(output_directory, pattern=paste0(res,'_'), full.names=T)
+delete_files <- delete_files[!grepl('full.txt$',delete_files)]
+unlink(delete_files)

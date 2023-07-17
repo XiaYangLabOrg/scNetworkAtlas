@@ -1,0 +1,5 @@
+# human and mouse atlas
+human_atlas/
+mouse_atlas/
+pan_atlas/
+*_old/

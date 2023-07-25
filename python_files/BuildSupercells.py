@@ -23,20 +23,25 @@ from MergeNetworksHelpers import *
 
 
 dataset_name = sys.argv[1]
-humanMATRIX = load_npz(dataset_name)
 
-#create outfile as a variable to store the cell type name
-outfile = dataset_name.split("/")[-1].split(".npz")[0]
+if dataset_name.endswith('.npz'):
+    humanMATRIX = load_npz(dataset_name)
 
-#re-assemble the path to the txt file that contains the names of the cell type's expressed genes from the HCA pre-processing
-genes = "/".join(dataset_name.split("/")[:-1]) + "/" + str(outfile)+ "_genes.txt"
+    #create outfile as a variable to store the cell type name
+    outfile = dataset_name.split("/")[-1].split(".npz")[0]
 
-adata = sc.AnnData(np.asarray(humanMATRIX.todense())).T
+    #re-assemble the path to the txt file that contains the names of the cell type's expressed genes from the HCA pre-processing
+    genes = "/".join(dataset_name.split("/")[:-1]) + "/" + str(outfile)+ "_genes.txt"
 
-#match the gene names to their corresponding expression data
-adata.var.index = pd.read_csv(genes, header = None).to_numpy().ravel()
-adata.var_names_make_unique()
+    adata = sc.AnnData(np.asarray(humanMATRIX.todense())).T
 
+    #match the gene names to their corresponding expression data
+    adata.var.index = pd.read_csv(genes, header = None).to_numpy().ravel()
+    adata.var_names_make_unique()
+else:
+    adata = sc.read_h5ad(dataset_name)
+    #create outfile as a variable to store the cell type name
+    outfile = dataset_name.split("/")[-1].split(".h5ad")[0]
 #make the supercell
 adata_merged = supercell_pipeline(adata,
                                   ngenes=2000,

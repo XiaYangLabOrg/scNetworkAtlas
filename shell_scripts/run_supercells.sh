@@ -9,6 +9,7 @@
 tissue_dir=$1
 tissue_celltype_file=$2
 supercell_dir=$3
+filetype=$4
 counter=1
 cd $tissue_dir
 while read line;
@@ -21,7 +22,7 @@ do
 			sleep 10m
 			exit
 		else
-			python3 ../python_files/BuildSupercells.py ${line}.npz
+			python3 ../python_files/BuildSupercells.py ${line}.${filetype}
 			echo "sleeping"
 			sleep 5m 
 			exit

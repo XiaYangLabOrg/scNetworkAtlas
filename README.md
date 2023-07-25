@@ -42,7 +42,7 @@ cp -r /path/to/python/shell/submission/scripts ./
 Run all submission scripts from the root directory /path/to/atlas/
 
 
-## 01. submit_run_cell_mapping.sh
+## 01. submit_run_cellmapping.sh
 inputs: 
 - base_dir: path to where all single cell database files are
 - mapping_file: path to where the cell type mapping file is for your atlas
@@ -57,11 +57,13 @@ celltype_column="celltypes"
 ```
 After setting these inputs in the script, run it from the atlas directory with: <br>
 ```
-bash submission_scripts/submit_run_cell_mapping.sh
+bash submission_scripts/submit_run_cellmapping.sh
 ```
 
 ## 02. submit_run_supercells.sh
-No inputs required. Must run submit_run_cell_mapping.sh before this.
+inputs:
+- filetype: gene expression matrix input file type ("npz" or "h5ad")
+
 ```
 bash submission_scripts/submit_run_supercells.sh
 ```

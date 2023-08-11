@@ -8,7 +8,7 @@
 
 supercell_dir=$1
 supercells=$2
-parameter=$3
+q1_size=$3
 
 counter=1
 while read line;
@@ -16,12 +16,13 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		file=./gene_memberships/${line}.gene_membership.${parameter}.csv.gz
-		if [ -f "$file" ]; then
+		outfile=./gene_memberships/${line}.gene_membership.${q1_size}.csv.gz
+		if [ -f "$outfile" ]; then
 			sleep 5m
 			exit
 		else
-			python3 ./python_files/ModuleBasedDimensionalityReduction.py $supercell_dir/${line}.h5ad ./saved_networks/final_edges/${line}.csv.gz ${line} ${parameter}
+			python3 ./python_files/ModuleBasedDimensionalityReduction.py ./saved_networks/final_edges/${line}.csv.gz ${outfile} ${q1_size}
+			echo "sleeping"
 			sleep 5m
 			exit
 		fi

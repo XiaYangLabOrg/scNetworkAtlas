@@ -3,7 +3,7 @@
 # Run from root directory /path/to/atlas/
 ##### INPUTS #####
 q1_module_sizes=('20' '35' '50')
-supercell_dir="merged_adata"
+supercell_dir="supercells"
 supercell_file="supercells.txt"
 ##################
 

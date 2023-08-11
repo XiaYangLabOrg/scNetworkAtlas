@@ -7,7 +7,7 @@
 
 supercell_file=$1
 modules_dir=$2
-res=$3
+q1=$3
 db=$4
 intermediate_dir=$5
 convertToHuman=$6
@@ -16,7 +16,7 @@ num_cores=$7
 
 echo $supercell_file
 echo $modules_dir
-echo $res_param
+echo $q1
 echo $db
 echo $intermediate_dir
 # echo $final_dir
@@ -27,14 +27,14 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		file="./pathway_annotations/intermediate_annotations/${line}/${res_param}_full.txt"
+		file="./pathway_annotations/intermediate_annotations/${line}/${q1}_full.txt"
 		if [ -f "$file" ];
 		then
 			echo "$file exists, sleeping"
 			sleep 5m
 			exit
 		fi
-		Rscript --vanilla ./r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${res} ${db} ${intermediate_dir} ${convertToHuman} ${num_cores} # ${final_dir}
+		Rscript --vanilla ./r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${q1} ${db} ${intermediate_dir} ${convertToHuman} ${num_cores}
 		echo "sleeping"
 		sleep 5m
 		exit

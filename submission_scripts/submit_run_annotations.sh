@@ -12,6 +12,8 @@ mode="test" # test or default
 dbs="/u/scratch/m/mikechen/pathway_databases/genesets/human_toy" # human or mouse
 # number of cores to run job
 num_cores=12
+# module size parameters (should match submit_run_genemembership.sh)
+q1_module_sizes=('20' '35' '50')
 ###################
 # Create folders
 mkdir -p pathway_annotations
@@ -36,12 +38,11 @@ fi
 cd ../
 if [[ "${mode}" == "test" ]]
 then
-    PARAMETERS=('0.01')
+    q1_module_sizes=(${q1_module_sizes[0]})
     num_supercells=1
     num_cores=4
 elif [[ "${mode}" == "default" ]]
 then
-    PARAMETERS=('0.002' '0.005' '0.007' '0.01')
     num_supercells=$(cat ${supercell_dir}/${supercell_file} | wc -l)
 else
     echo "mode argument must be test or default"
@@ -51,7 +52,7 @@ fi
 
 echo $num_supercells
 
-for i in "${PARAMETERS[@]}"
+for i in "${q1_module_sizes[@]}"
 do
     # rerun on supercells without pathway results
     if [ $rerun = "True" ]
@@ -73,12 +74,12 @@ do
         then
             # number of supercells without results
             num_rerun_supercells=$(cat ${param_subset_file} | wc -l)
-            echo "Rerunning ${i} resolution on ${num_rerun_supercells} celltypes"
+            echo "Rerunning ${i} module size on ${num_rerun_supercells} celltypes"
             cat $param_subset_file
             qsub -t 1:${num_rerun_supercells} -pe shared ${num_cores} shell_scripts/run_annotations.sh ${param_subset_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
             
         else
-            echo "No need to rerun ${i} resolution"
+            echo "No need to rerun ${i} module size"
             
         fi  
     else

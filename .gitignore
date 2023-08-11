@@ -3,4 +3,4 @@ human_atlas/
 mouse_atlas/
 pan_atlas/
 *_old/
-__pycache__
+__pycache__/

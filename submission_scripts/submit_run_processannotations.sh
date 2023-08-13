@@ -18,9 +18,13 @@ then
 fi
 cd ../
 
-
+# Set user inputs
+intermediate_dir='./pathway_annotations/intermediate_annotations'
+final_dir='./pathway_annotations/final_annotations'
 if [[ "${mode}" == "test" ]]
 then
+    intermediate_dir="${intermediate_dir}_test"
+    final_dir="${final_dir}_test"
     num_supercells=1
 elif [[ "${mode}" == "default" ]]
 then
@@ -29,14 +33,10 @@ else
     echo "mode argument must be test or default"
     exit
 fi
-
 echo $num_supercells
+mkdir ${final_dir}
 
 
-# Set user inputs
-intermediate_dir='./pathway_annotations/intermediate_annotations'
-final_dir='./pathway_annotations/final_annotations'
-mkdir pathway_annotations/final_annotations/
 
 qsub -t 1:${num_supercells} shell_scripts/run_processannotations.sh ${supercell_dir}/${supercell_file} ${intermediate_dir} ${final_dir}
 

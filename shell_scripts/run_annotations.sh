@@ -27,7 +27,7 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		file="./pathway_annotations/intermediate_annotations/${line}/${q1}_full.txt"
+		file="${intermediate_dir}/${line}/${q1}_full.txt"
 		if [ -f "$file" ];
 		then
 			echo "$file exists, sleeping"

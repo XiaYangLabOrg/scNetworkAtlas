@@ -16,16 +16,20 @@ num_cores=12
 q1_module_sizes=('20' '35' '50')
 ###################
 # Create folders
-mkdir -p pathway_annotations
-mkdir -p pathway_annotations/intermediate_annotations/
 if [ $rerun = "True" ]
 then
     mkdir -p temp_files
 fi
 
 modules_dir='gene_memberships/'
-intermediate_dir='./pathway_annotations/intermediate_annotations/'
+intermediate_dir='./pathway_annotations/intermediate_annotations'
+if [[ "${mode}" == "test" ]]
+then
+    intermediate_dir="${intermediate_dir}_test"
+fi
 convertToHuman="False" # "True" or "False"
+mkdir -p pathway_annotations
+mkdir -p $intermediate_dir
 
 
 
@@ -48,7 +52,6 @@ else
     echo "mode argument must be test or default"
     exit
 fi
-
 
 echo $num_supercells
 

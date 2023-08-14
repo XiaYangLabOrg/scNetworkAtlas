@@ -13,7 +13,7 @@ If you want to use the AUCell from SCENIC for graph based dimensionality reducti
 ```
 pip install pyscenic
 ```
-If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr. 
+If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr OR use any R environment you have. Be sure that 'foreach' and 'doParallel' are installed in your R environment.
 ```  
 conda env create -n enrichr --file install/pathway.environment.yml
 conda activate enrichr
@@ -85,7 +85,7 @@ bash submission_scripts/submit_run_merge.sh
 
 ## 05. submit_run_genemembership.sh
 inputs:
-- PARAMETERS: different resolutions at which to create the modules
+- q1_module_sizes: desired module sizes (set as the 25th percentile)
 ```
 bash submission_scripts/submit_run_genemembership.sh
 ```
@@ -102,7 +102,7 @@ inputs:
 - modules_dir: directory of gene memberships created in previous script relative to atlas root directory (e.g. gene_memberships)
 - dbs: path to all pathway enrichment databases
 - intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- PARAMETERS: different resolutions at which to create the modules
+- q1_module_sizes: desired module sizes (MUST MATCH from step 05)
 ```
 bash submission_scripts/submit_run_annotations.sh
 ```

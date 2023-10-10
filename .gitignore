@@ -4,3 +4,6 @@ mouse_atlas/
 pan_atlas/
 *_old/
 __pycache__/
+network_validation/
+combined_networks/
+.gitmodules

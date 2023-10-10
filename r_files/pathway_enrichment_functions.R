@@ -370,6 +370,7 @@ makePathwayEnrichmentDf <- function(DEG_df,
         print(database_name)
         
         Module2 <- tool.read(pathway_database) # pathway database
+        colnames(Module2) <- c('module','gene')
         Unique_module2 <- unique(Module2$module) # names of pathways in database
         
         Module2_len <- length(unique(Module2$module)) # number of pathways in database

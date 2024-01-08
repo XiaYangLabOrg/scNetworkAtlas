@@ -4,9 +4,14 @@
 ```
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 cd scNetworkAtlas
+# checkout a new local branch that tracks the remote branch scGRNdb.v1
+git checkout --track origin/scGRNdb.v1
+git submodule update --init
+cd SCING
 conda env create -n scing --file install/scing.environment.yml 
 conda activate scing
-pip install pyitlib  
+pip install pyitlib 
+pip install -e . 
 ```
 
 If you want to use the AUCell from SCENIC for graph based dimensionality reduction you must install pyscenic  

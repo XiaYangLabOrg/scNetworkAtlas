@@ -4,3 +4,4 @@
 [submodule "SCING"]
 	path = SCING
 	url = https://github.com/XiaYangLabOrg/SCING.git
+	branch = scing1.0

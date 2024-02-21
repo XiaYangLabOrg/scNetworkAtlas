@@ -53,8 +53,6 @@ adata = sc.read(adata_merged)
 #CHANGE RANGE + GRN BUILDER 
 all_edges = []
 
-np.random.seed()
-
 adata_saved = adata.copy()
 
 ########################################GENES FILTER##############################

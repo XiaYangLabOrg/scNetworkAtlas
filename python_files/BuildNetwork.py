@@ -7,7 +7,7 @@
 # Set number of threads to use
 import os
 import scanpy as sc
-
+from scing import build
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -16,7 +16,6 @@ warnings.filterwarnings("ignore")
 
 
 import sys
-sys.path.insert(1,'../../src/')
 #print(f"Name of the script      : {sys.argv[0]=}")
 #print(f"Arguments of the script : {sys.argv[1:]=}")
 
@@ -32,14 +31,6 @@ sys.path.insert(1,'../../src/')
 
 #arg_line = " ".join(sys.argv[1:])
 #print(arg_line)
-
-
-# In[3]:
-
-
-from supercellHelpers import *
-from buildGRNHelpers import *
-from MergeNetworksHelpers import *
 
 
 # In[4]:
@@ -73,8 +64,8 @@ adata_saved = adata.copy()
     # 100 neighbors for each gene
     # 10 pcs
     # 0.7 subsample per run
-scing = grnBuilder(adata_saved, -1, 100, 10,0.7,
-                      'test','test',1,int(4e9),True)
+scing = build.grnBuilder(adata_saved, -1, 100, 10,0.7,
+                      'test','test',1,int(4e9),True, int(iteration))
 scing.subsample_cells()
 
 scing.filter_genes()

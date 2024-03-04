@@ -4,7 +4,7 @@
 
 tissue_dir="tissue_adata/"
 supercell_dir="supercells"
-filetype="npz"
+filetype="h5ad"
 
 
 echo $filetype

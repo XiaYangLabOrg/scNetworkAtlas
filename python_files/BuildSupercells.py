@@ -15,11 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import sys
-sys.path.insert(1,'../../../src/')
-
-from supercellHelpers import *
-from buildGRNHelpers import *
-from MergeNetworksHelpers import *
+from scing import supercellHelpers as pb
 
 
 dataset_name = sys.argv[1]
@@ -43,7 +39,7 @@ else:
     #create outfile as a variable to store the cell type name
     outfile = dataset_name.split("/")[-1].split(".h5ad")[0]
 #make the supercell
-adata_merged = supercell_pipeline(adata,
+adata_merged = pb.supercell_pipeline(adata,
                                   ngenes=2000,
                                   npcs=20,
                                   ncell=500,

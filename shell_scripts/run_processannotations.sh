@@ -18,14 +18,26 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
+        start_time=$(date +%s) # Record start time
 		file=${final_dir}/${line}/FILTERED.txt
 		if [ -f "$file" ]; then
 			sleep 120
 			exit
 		else
 			Rscript --vanilla ./r_files/ProcessAnnotations.r ${line} ${intermediate_dir} ${final_dir}
-			sleep 5m
-			exit
+            echo "ProcessAnnotations.r completed on: " `date`
+            echo " "
+            end_time=$(date +%s) # Record end time
+            duration=$((end_time - start_time)) # Calculate duration
+            echo "Total time taken: $duration seconds"
+            echo "Job $JOB_ID end on: " `date`
+            echo " "
+            timing_file="timing_info/process_annotations.txt"
+            echo "Start Time: $start_time" > $timing_file
+            echo "End Time: $end_time" >> $timing_file
+            echo "Duration: $duration seconds" >> $timing_file
+            sleep 5m
+            exit
 		fi
 		
 	fi

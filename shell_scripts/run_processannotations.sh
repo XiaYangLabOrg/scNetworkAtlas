@@ -32,6 +32,7 @@ do
             echo "Total time taken: $duration seconds"
             echo "Job $JOB_ID end on: " `date`
             echo " "
+            mkdir -p timing_info
             timing_file="timing_info/process_annotations.txt"
             echo "Start Time: $start_time" > $timing_file
             echo "End Time: $end_time" >> $timing_file

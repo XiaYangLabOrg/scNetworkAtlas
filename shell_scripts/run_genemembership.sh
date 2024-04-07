@@ -28,7 +28,8 @@ do
             echo "Total time taken: $duration seconds"
             echo "Job $JOB_ID end on: " `date`
             echo " "
-            timing_file="jobout/gene_memberships.txt"
+            mkdir -p timing_info
+            timing_file="timing_info/gene_memberships.txt"
             echo "Start Time: $start_time" > $timing_file
             echo "End Time: $end_time" >> $timing_file
             echo "Duration: $duration seconds" >> $timing_file

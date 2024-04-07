@@ -18,6 +18,7 @@ python3 ../python_files/CellMapping.py $mapping_file $adata_dir $celltype_column
 end_time=$(date +%s) # Record end time
 duration=$((end_time - start_time)) # Calculate duration
 
+mkdir -p timing_info
 timing_file="timing_info/cell_mapping.txt"
 echo "Start Time: $start_time" > $timing_file
 echo "End Time: $end_time" >> $timing_file

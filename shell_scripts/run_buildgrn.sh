@@ -28,7 +28,7 @@ else
     echo " "
     
     mkdir -p timing_info
-    timing_file="timing_info/buildgrn.txt"
+    timing_file="../timing_info/buildgrn.txt"
     echo "Start Time: $start_time" > $timing_file
     echo "End Time: $end_time" >> $timing_file
     echo "Duration: $duration seconds" >> $timing_file

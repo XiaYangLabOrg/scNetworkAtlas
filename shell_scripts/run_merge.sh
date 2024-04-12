@@ -38,8 +38,8 @@ do
             echo "Job $JOB_ID end on: " `date`
             echo " "
             
-            mkdir -p timing_info
-            timing_file="timing_info/merge.txt"
+            mkdir -p ../timing_info
+            timing_file="../timing_info/merge.txt"
             echo "Start Time: $start_time" > $timing_file
             echo "End Time: $end_time" >> $timing_file
             echo "Duration: $duration seconds" >> $timing_file

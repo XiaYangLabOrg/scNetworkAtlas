@@ -43,6 +43,7 @@ adata_merged = pb.supercell_pipeline(adata,
                                   ngenes=2000,
                                   npcs=20,
                                   ncell=500,
-                                  verbose=True)
+                                  verbose=True,
+                                  profiler_output_file=f"../supercells/profile_stats/{outfile}")
 os.makedirs('../supercells',exist_ok=True)
 adata_merged.write('../supercells/'+str(outfile)+'.h5ad')

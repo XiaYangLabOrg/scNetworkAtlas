@@ -62,8 +62,16 @@ adata_saved = adata.copy()
     # 100 neighbors for each gene
     # 10 pcs
     # 0.7 subsample per run
+    
+dirname = f'saved_networks/intermediate_data/{outfile}/'
+if (not os.path.exists(dirname)):
+	os.makedirs(dirname)
+    
+if (not os.path.exists('saved_networks/profile_stats/')):
+	os.makedirs('saved_networks/profile_stats/')
+
 scing = build.grnBuilder(adata_saved, -1, 100, 10,0.7,
-                      'test','test',1,int(4e9),True, int(iteration))
+                      'test','test',1,int(4e9),True, int(iteration), profiler_output_file=f"saved_networks/profile_stats/{outfile}")
 scing.subsample_cells()
 
 scing.filter_genes()
@@ -74,9 +82,7 @@ scing.build_grn()
 df_edges = scing.edges
 
 # In[12]:
-dirname = f'saved_networks/intermediate_data/{outfile}/'
-if (not os.path.exists(dirname)):
-	os.makedirs(dirname)
+
 
 print(dirname+str(outfile)+'.network.'+str(iteration)+'.csv.gz')   
 df_edges.to_csv(dirname+str(outfile)+'.network.'+str(iteration)+'.csv.gz', index = False)

@@ -65,19 +65,21 @@ scing_config = {
 def setup():
     # Set up project structure (copy over files)
     # -----------------------------------
+    print("\nCopying in project files...")
     import shutil
 
     # TODO: clone from Git repo once stable version is released
 
     # copy in files needed to run SCING
-    source_base_dir = '~/scratch/dry_run_pipeline/'
+    source_base_dir = '~/scratch/dry_run_pipeline'
     destination_dir = '.' # current directory assumed to be new project location
 
     # these names should reflect directory names from the scNetworkAtlas GitHub repo
     dirs = ['python_files', 'shell_scripts', 'submission_scripts']
     try:
         for directory in dirs:
-            shutil.copytree(f'source_base_dir/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=False) # don't allow overwriting an existing directory
+            print(f'{source_base_dir}/{directory}')
+            shutil.copytree(f'{source_base_dir}/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=False) # don't allow overwriting an existing directory
     except FileExistsError:
         print(f"Directory '{destination_dir}' already exists.")
     except OSError as e:
@@ -88,7 +90,7 @@ def setup():
     
     # Make bookkeeping directories
     # -----------------------------------
-
+    print("\nCreating bookkeeping directories...")
     import os
 
     # Make directories as needed
@@ -101,7 +103,7 @@ def setup():
     
     # Activate SCING conda env
     # -----------------------------------
-
+    print("\nActivating conda env...")
     import subprocess
 
     def activate_conda_environment(conda_env):
@@ -128,6 +130,7 @@ def setup():
 # Run pipeline steps
 # -----------------------------------
 
+# TODO: must ensure correct conda env before each step
 def cell_mapping():
     pass
 
@@ -151,7 +154,7 @@ def process_annotations():
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
+        print("Usage: python3 run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
         sys.exit(1)
     
     step = sys.argv[1]
@@ -174,7 +177,7 @@ if __name__ == "__main__":
         process_annotations()
     else:
         print("Invalid step:", step)
-        print("Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
+        print("Usage: python3 run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
         sys.exit(1)
 
 # -----------------------------------

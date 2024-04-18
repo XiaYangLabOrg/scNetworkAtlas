@@ -5,6 +5,8 @@
 # PREREQUISITES: scing miniconda environment exists (build from SCING repo) #
 ### END OF HOW TO USE ###
 
+import sys
+
 # User-configurable inputs
 # -----------------------------------
 
@@ -44,88 +46,129 @@ scing_config = {
         'final_dir': './pathway_annotations/final_annotations'
     },
 }
-
+    
 # -----------------------------------
 # End of User-configurable inputs
 
 
 
-# Set up project structure (copy over files)
+# Set up
 # -----------------------------------
 
-import shutil
+def setup():
+    # Set up project structure (copy over files)
+    # -----------------------------------
+    import shutil
 
-# TODO: clone from Git repo once stable version is released
+    # TODO: clone from Git repo once stable version is released
 
-# copy in files needed to run SCING
-source_base_dir = '~/scratch/dry_run_pipeline/'
-destination_dir = '.' # current directory assumed to be new project location
+    # copy in files needed to run SCING
+    source_base_dir = '~/scratch/dry_run_pipeline/'
+    destination_dir = '.' # current directory assumed to be new project location
 
-# these names should reflect directory names from the scNetworkAtlas GitHub repo
-dirs = ['python_files', 'shell_scripts', 'submission_scripts']
-try:
-    for directory in dirs:
-        shutil.copytree(f'source_base_dir/{directory}', f'{destination_dir}/{directory}' dirs_exist_ok=False) # don't allow overwriting an existing directory
-except FileExistsError:
-    print(f"Directory '{destination_dir}' already exists.")
-except OSError as e:
-    print(f"Error: {e.strerror}")
-
-# -----------------------------------
-# End of Set up (copy over files)
-
-
-
-# Make bookkeeping directories
-# -----------------------------------
-
-import os
-
-# Make directories as needed
-os.makedirs("timing_info") # store timing metrics
-os.makedirs("jobout") # store job logs
-
-# -----------------------------------
-# End of Make directories
-
-
-
-# Activate SCING conda env
-# -----------------------------------
-
-import subprocess
-
-def activate_conda_environment(conda_env):
+    # these names should reflect directory names from the scNetworkAtlas GitHub repo
+    dirs = ['python_files', 'shell_scripts', 'submission_scripts']
     try:
-        # Activate the specified conda environment
-        activate_cmd = f"conda activate {conda_env}"
-        subprocess.run(activate_cmd, shell=True, check=True)
-        print(f"Activated conda environment: {conda_env}")
-    except subprocess.CalledProcessError:
-        print(f"Error: Failed to activate conda environment {conda_env}")
+        for directory in dirs:
+            shutil.copytree(f'source_base_dir/{directory}', f'{destination_dir}/{directory}' dirs_exist_ok=False) # don't allow overwriting an existing directory
+    except FileExistsError:
+        print(f"Directory '{destination_dir}' already exists.")
+    except OSError as e:
+        print(f"Error: {e.strerror}")
+    # -----------------------------------
+    # End of Set up (copy over files)
+    
+    
+    # Make bookkeeping directories
+    # -----------------------------------
 
-# if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
-activate_conda_environment('scing')
+    import os
 
+    # Make directories as needed
+    os.makedirs("timing_info") # store timing metrics
+    os.makedirs("jobout") # store job logs
 
+    # -----------------------------------
+    # End of Make directories
+
+    
+    # Activate SCING conda env
+    # -----------------------------------
+
+    import subprocess
+
+    def activate_conda_environment(conda_env):
+        try:
+            # Activate the specified conda environment
+            activate_cmd = f"conda activate {conda_env}"
+            subprocess.run(activate_cmd, shell=True, check=True)
+            print(f"Activated conda environment: {conda_env}")
+        except subprocess.CalledProcessError:
+            print(f"Error: Failed to activate conda environment {conda_env}")
+
+    # if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
+    activate_conda_environment('scing')
+
+    # -----------------------------------
+    # End of Set up conda env
+
+    
 # -----------------------------------
-# End of Set up conda env
+# End of Set up
 
 
 
 # Run pipeline steps
 # -----------------------------------
 
-## TODO: FILL OUT THE SCRIPTS USING THE CONFIG ABOVE
-## TODO: create system to specify which step of pipeline should be run (it's too much to use a Workflow manager rn cuz then we'd need a job running over 24 hours to monitor what's finishing and stuff, but merge doesn't finish that fast haha)
+def cell_mapping():
+    pass
+
+def pseudobulking():
+    pass
+
+def build_grn():
+    pass
+
+def merge_networks():
+    pass
+
+def gene_membership():
+    pass
+
+def annotations():
+    pass
+
+def process_annotations():
+    pass
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
-
         sys.exit(1)
-
+    
     step = sys.argv[1]
+
+    if step == "setup":
+        setup()
+    elif step == "cell_mapping":
+        cell_mapping()
+    elif step == "pseudobulking":
+        pseudobulking()
+    elif step == "build_grn":
+        build_grn()
+    elif step == "merge_networks":
+        merge_networks()
+    elif step == "gene_membership":
+        gene_membership()
+    elif step == "annotations":
+        annotations()
+    elif step == "process_annotations":
+        process_annotations()
+    else:
+        print("Invalid step:", step)
+        print("Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
+        sys.exit(1)
 
 # -----------------------------------
 # End of Run pipeline steps

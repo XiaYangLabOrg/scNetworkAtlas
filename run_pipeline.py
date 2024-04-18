@@ -77,7 +77,7 @@ def setup():
     dirs = ['python_files', 'shell_scripts', 'submission_scripts']
     try:
         for directory in dirs:
-            shutil.copytree(f'source_base_dir/{directory}', f'{destination_dir}/{directory}' dirs_exist_ok=False) # don't allow overwriting an existing directory
+            shutil.copytree(f'source_base_dir/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=False) # don't allow overwriting an existing directory
     except FileExistsError:
         print(f"Directory '{destination_dir}' already exists.")
     except OSError as e:

@@ -1,8 +1,15 @@
 ### HOW TO USE ###
-# Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations> #
-# Run all steps, including setup, in the directory of your new project #
-# This will set up all project files and activate the environment necessary to run SCING #
+
 # PREREQUISITES: scing miniconda environment exists (build from SCING repo) #
+
+# BEFORE YOU BEGIN: fill out scing_config below with the appropriate details for your project #
+
+# Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations> #
+
+# Run all steps, including setup, in the directory of your new project #
+
+# This will set up all project files and activate the environment necessary to run SCING #
+
 ### END OF HOW TO USE ###
 
 import sys

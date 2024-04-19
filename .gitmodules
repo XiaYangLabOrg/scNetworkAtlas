@@ -1,7 +1,0 @@
-[submodule "network_validation/mergeomics"]
-	path = network_validation/mergeomics
-	url = git@github.com:XiaYangLabOrg/mergeomics.git
-[submodule "SCING"]
-	path = SCING
-	url = https://github.com/XiaYangLabOrg/SCING.git
-	branch = scing1.0

@@ -20,6 +20,7 @@ import sys
 # Configuration settings (these settings are read into submission scripts)
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 scing_config = {
+    'conda_init_script': '~/project-xyang123/miniconda3/etc/profile.d/conda.sh',
     'cell_mapping': {
         'base_dir': base_dir,
         'mapping_file': f"${base_dir}all_celltypes/mouse_TabMurSenis_FACS.cleaned.tsv",
@@ -67,18 +68,19 @@ def setup():
     # -----------------------------------
     print("\nCopying in project files...")
     import shutil
+    import os
 
     # TODO: clone from Git repo once stable version is released
 
     # copy in files needed to run SCING
     source_base_dir = '~/scratch/dry_run_pipeline'
+    source_base_dir = os.path.expanduser(source_base_dir)  # resolve the tilde character into the actual home directory (python's shutil doesn't do this automatically)
     destination_dir = '.' # current directory assumed to be new project location
 
     # these names should reflect directory names from the scNetworkAtlas GitHub repo
     dirs = ['python_files', 'shell_scripts', 'submission_scripts']
     try:
         for directory in dirs:
-            print(f'{source_base_dir}/{directory}')
             shutil.copytree(f'{source_base_dir}/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=False) # don't allow overwriting an existing directory
     except FileExistsError:
         print(f"Directory '{destination_dir}' already exists.")
@@ -91,11 +93,10 @@ def setup():
     # Make bookkeeping directories
     # -----------------------------------
     print("\nCreating bookkeeping directories...")
-    import os
 
     # Make directories as needed
-    os.makedirs("timing_info") # store timing metrics
-    os.makedirs("jobout") # store job logs
+    os.makedirs("timing_info", exist_ok=True) # store timing metrics
+    os.makedirs("jobout", exist_ok=True) # store job logs
 
     # -----------------------------------
     # End of Make directories
@@ -104,16 +105,13 @@ def setup():
     # Activate SCING conda env
     # -----------------------------------
     print("\nActivating conda env...")
-    import subprocess
 
     def activate_conda_environment(conda_env):
         try:
-            # Activate the specified conda environment
-            activate_cmd = f"conda activate {conda_env}"
-            subprocess.run(activate_cmd, shell=True, check=True)
-            print(f"Activated conda environment: {conda_env}")
-        except subprocess.CalledProcessError:
-            print(f"Error: Failed to activate conda environment {conda_env}")
+            combined_command = f"source {scing_config['conda_init_script']} && conda activate {conda_env}"
+            print(f"\nATTENTION: PLEASE RUN \n`{combined_command}`\n to activate conda environment {conda_env}")
+        except Exception as e:
+            print(f"Error: {e}")
 
     # if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
     activate_conda_environment('scing')
@@ -130,7 +128,7 @@ def setup():
 # Run pipeline steps
 # -----------------------------------
 
-# TODO: must ensure correct conda env before each step
+# TODO: must ensure correct conda env before each step (prompt user)
 def cell_mapping():
     pass
 

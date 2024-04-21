@@ -35,4 +35,4 @@ pb.pseudobulk_pipeline(adata=adata,
                        save_by=[celltype_col],
                        n_hvgs=2000, n_pcs=40, n_neighbors=10,
                        pb_n_neighbors=10, pb_max_overlap=5, max_pb_pergroup=500, min_pb_pergroup=30, recluster=recluster,
-                       out_dir=out_dir, pref=pref,random_state=0, profiler_output_file=f"../supercells/profile_stats/{outfile}")
+                       out_dir=out_dir, pref=pref,random_state=0)

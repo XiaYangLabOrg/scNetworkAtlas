@@ -14,51 +14,8 @@
 
 import sys
 
-# User-configurable inputs
-# -----------------------------------
-
-# Configuration settings (these settings are read into submission scripts)
-base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
-scing_config = {
-    'conda_init_script': '~/project-xyang123/miniconda3/etc/profile.d/conda.sh',
-    'cell_mapping': {
-        'base_dir': base_dir,
-        'mapping_file': f"${base_dir}all_celltypes/mouse_TabMurSenis_FACS.cleaned.tsv",
-        'adata_dir': f"${base_dir}mouse/Tab_Mur_Senis_FACS/adatas/",
-        'celltype_column': "celltypes"
-    },
-    'pseudobulking': {
-        'filetype': 'npz' # npz or h5ad
-    },
-    'build_grn': {
-        'num_networks': 100
-    },
-    'merge_networks': {
-        'config': None # no inputs needed for merge networks step
-    },
-    'gene_membership': {
-        'q1_module_sizes': ('20' '35' '50')
-    },
-    'annotations': {
-        'rerun': "False",
-        'mode': "test", # test or default
-        'dbs': "/u/scratch/m/mikechen/pathway_databases/genesets/human_toy", # human or mouse
-        'num_cores': 12,
-        'q1_module_sizes': ('20' '35' '50'), # should match gene_membership config
-        'modules_dir': 'gene_memberships/',
-        'intermediate_dir': './pathway_annotations/intermediate_annotations'
-    },
-    'process_annotations': {
-        'mode': 'test', # test or default
-        'intermediate_dir': './pathway_annotations/intermediate_annotations',
-        'final_dir': './pathway_annotations/final_annotations'
-    },
-}
-    
-# -----------------------------------
-# End of User-configurable inputs
-
-
+# Fetch config from current dir
+from config import base_dir, scing_config
 
 # Set up
 # -----------------------------------
@@ -73,7 +30,8 @@ def setup():
     # TODO: clone from Git repo once stable version is released
 
     # copy in files needed to run SCING
-    source_base_dir = '~/scratch/dry_run_pipeline'
+    #source_base_dir = '~/scratch/dry_run_pipeline'
+    source_base_dir = '..'
     source_base_dir = os.path.expanduser(source_base_dir)  # resolve the tilde character into the actual home directory (python's shutil doesn't do this automatically)
     destination_dir = '.' # current directory assumed to be new project location
 
@@ -128,18 +86,26 @@ def setup():
 # Run pipeline steps
 # -----------------------------------
 
+import os
+
 # TODO: must ensure correct conda env before each step (prompt user)
 def cell_mapping():
-    pass
+    config = scing_config['cell_mapping']
+    cmd = f"bash submission_scripts/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
+    os.system(cmd)
 
 def pseudobulking():
-    pass
+    config = scing_config['pseudobulking_v2']
+    cmd = f"bash submission_scripts/submit_run_supercells_v2.sh {config['celltype_col']} {config['sample_col']} {config['recluster']}"
+    os.system(cmd)
 
 def build_grn():
-    pass
+    cmd = f"bash submission_scripts/submit_run_buildgrn.sh {scing_config['build_grn']['num_networks']}"
+    os.system(cmd)
 
 def merge_networks():
-    pass
+    cmd = 'bash submission_scripts/submit_run_merge.sh'
+    os.system(cmd)
 
 def gene_membership():
     pass

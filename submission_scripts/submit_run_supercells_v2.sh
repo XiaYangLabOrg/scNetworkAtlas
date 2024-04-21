@@ -3,9 +3,9 @@
 # Run from root directory /path/to/Allen_10X/
 tissue_dir="tissue_adata"
 supercell_dir="supercells"
-celltype_col="celltypes"
-sample_col="samples"
-recluster=True
+celltype_col=$1
+sample_col=$2
+recluster=$( [ "$3" = "True" ] && echo true || echo false )
 tissue_celltype_file=tissue_celltype_file.txt
 
 

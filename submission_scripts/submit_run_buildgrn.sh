@@ -2,7 +2,7 @@
 
 # Run from root directory /path/to/Allen_10X/
 ##### INPUTS #####
-num_networks=100
+num_networks=$1
 ##################
 
 supercell_dir="supercells"

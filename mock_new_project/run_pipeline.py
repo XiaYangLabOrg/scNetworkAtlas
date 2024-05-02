@@ -17,6 +17,13 @@ import sys
 # Fetch config from current dir
 from config import base_dir, scing_config
 
+def activate_conda_environment(conda_env):
+    try:
+        combined_command = f"source {scing_config['conda_init_script']} && conda activate {conda_env}"
+        print(f"\nATTENTION: PLEASE RUN \n`{combined_command}`\n to activate conda environment {conda_env}")
+    except Exception as e:
+        print(f"Error: {e}")
+
 # Set up
 # -----------------------------------
 
@@ -64,13 +71,6 @@ def setup():
     # -----------------------------------
     print("\nActivating conda env...")
 
-    def activate_conda_environment(conda_env):
-        try:
-            combined_command = f"source {scing_config['conda_init_script']} && conda activate {conda_env}"
-            print(f"\nATTENTION: PLEASE RUN \n`{combined_command}`\n to activate conda environment {conda_env}")
-        except Exception as e:
-            print(f"Error: {e}")
-
     # if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
     activate_conda_environment('scing')
 
@@ -88,32 +88,57 @@ def setup():
 
 import os
 
-# TODO: must ensure correct conda env before each step (prompt user)
+def confirm_conda_activated():
+    confirmation = input("Is your scing conda environment activated? (y/n): ").lower()
+    if confirmation == 'y':
+        return True
+    elif confirmation == 'n':
+        print("Please activate your conda environment and run the script again.")
+        activate_conda_environment('scing')
+        sys.exit()
+    else:
+        print("Invalid input. Please enter 'y' or 'n'.")
+        return False
+
 def cell_mapping():
+    confirm_conda_activated()
+
     config = scing_config['cell_mapping']
     cmd = f"bash submission_scripts/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
     os.system(cmd)
 
 def pseudobulking():
+    confirm_conda_activated()
+
     config = scing_config['pseudobulking_v2']
     cmd = f"bash submission_scripts/submit_run_supercells_v2.sh {config['celltype_col']} {config['sample_col']} {config['recluster']}"
     os.system(cmd)
 
 def build_grn():
+    confirm_conda_activated()
+
     cmd = f"bash submission_scripts/submit_run_buildgrn.sh {scing_config['build_grn']['num_networks']}"
     os.system(cmd)
 
 def merge_networks():
+    confirm_conda_activated()
+
     cmd = 'bash submission_scripts/submit_run_merge.sh'
     os.system(cmd)
 
 def gene_membership():
+    confirm_conda_activated()
+
     pass
 
 def annotations():
+    confirm_conda_activated()
+
     pass
 
 def process_annotations():
+    confirm_conda_activated()
+
     pass
 
 if __name__ == "__main__":

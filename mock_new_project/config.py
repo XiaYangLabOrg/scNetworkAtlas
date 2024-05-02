@@ -8,16 +8,16 @@ scing_config = {
 
     'cell_mapping': {
         'base_dir': base_dir,
-        'mapping_file': f"${base_dir}all_celltypes/mouse_TabMurSenis_FACS.cleaned.tsv",
-        'adata_dir': f"${base_dir}mouse/Tab_Mur_Senis_FACS/adatas/",
+        'mapping_file': f"{base_dir}all_celltypes/mouse_TabMurSenis_FACS.cleaned.tsv",
+        'adata_dir': f"{base_dir}mouse/Tab_Mur_Senis_FACS/adatas/",
         'celltype_column': "celltypes"
     },
     'pseudobulking': {
         'filetype': 'npz' # npz or h5ad
     },
-    'pseudobulking_v2': {
-        'celltype_col': 'celltypes',
-        'sample_col': 'samples',
+    'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
+        'celltype_col': 'Cell.Type',
+        'sample_col': 'SampleID',
         'recluster': True,
     },
     'build_grn': {

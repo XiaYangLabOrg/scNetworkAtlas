@@ -156,6 +156,7 @@ def process_annotations():
     pass
 
 def clean():
+    pass
     # import shutil
     
     # confirmation = input(f"Please confirm you'd like to delete all pipeline scripts (does not delete any outputs produced by SCING, just scripts in {dirs} used to run scripts). (y/n): ").lower()

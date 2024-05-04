@@ -49,6 +49,11 @@ Also copy in the pipeline runner.
 cp ../run_pipeline.py .
 ```
 
+Note to those who have used previous versions of this repository:
+
+- Each project directory no longer needs its own copy of submission scripts
+- `run_pipeline.py` handles proper submission as long as your `config.py` is properly filled out
+
 ## Configuring Project Settings
 
 Fill out `config.py` with your project and development environment details.

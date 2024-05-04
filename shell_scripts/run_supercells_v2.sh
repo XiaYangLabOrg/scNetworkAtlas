@@ -23,7 +23,7 @@ do
 			sleep 10m
 			exit
 		else
-			python3 python_files/BuildSupercells_v2.py ${line}.h5ad ${supercell_dir} ${celltype_col} ${sample_col} ${recluster}
+			python3 ../python_files/BuildSupercells_v2.py ${line}.h5ad ${supercell_dir} ${celltype_col} ${sample_col} ${recluster}
 			echo "sleeping"
 			sleep 5m 
 			exit

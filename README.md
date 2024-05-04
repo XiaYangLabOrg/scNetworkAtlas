@@ -1,126 +1,79 @@
-# SCING network building pipeline
+# SCING Pipeline
 
-## Installation
+## Installing the Pipeline
+
+First, clone this repository.
+
 ```
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
+```
+
+Now, checkout a new local branch that tracks the scGRNdb.v1 branch.
+
+```
 cd scNetworkAtlas
-# checkout a new local branch that tracks the remote branch scGRNdb.v1
 git checkout --track origin/scGRNdb.v1
-git submodule update --init
-cd SCING
+```
+
+Next, create a conda environment for SCING.
+
+```
 conda env create -n scing --file install/scing.environment.yml 
 conda activate scing
-pip install pyitlib 
-pip install -e . 
 ```
 
-If you want to use the AUCell from SCENIC for graph based dimensionality reduction you must install pyscenic  
-```
-pip install pyscenic
-```
-If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr OR use any R environment you have. Be sure that 'foreach' and 'doParallel' are installed in your R environment.
-```  
-conda env create -n enrichr --file install/pathway.environment.yml
-conda activate enrichr
-# install inside R
-R
-> install.packages('foreach')
-> install.packages('doParallel')
-> quit()
-```
-
-## Create a directory for each atlas
-From scNetworkAtlas directory, make human/mouse directory and the atlas directory inside that.
-```
-mkdir human_atlas
-mkdir human_atlas/Allen_10X
-cd human_atlas/Allen_10X
-cp -r /path/to/python/shell/submission/scripts ./
-```
-
-## Initial Directories
-- python_scripts
-- shell_scripts
-- submission_scripts: requires changing input files
-- ../../src: SCING scripts
-
-Run all submission scripts from the root directory /path/to/atlas/
-
-
-## 01. submit_run_cellmapping.sh
-inputs: 
-- base_dir: path to where all single cell database files are
-- mapping_file: path to where the cell type mapping file is for your atlas
-- adata_dir: path to where the adata file is for your atlas
-- celltype_column: name of the adata column containing the original cell type labels (explore h5ad file in jupyter notebook beforehand)
+TODO: I don't know why we need this package lol
 
 ```
-base_dir="/u/project/xyang123/shared/reference/single_cell_databases/"
-mapping_file="${base_dir}all_celltypes/human_Allen_10X.cleaned.tsv"
-adata_dir="${base_dir}human/Allen_10X/adatas/"
-celltype_column="celltypes"
-```
-After setting these inputs in the script, run it from the atlas directory with: <br>
-```
-bash submission_scripts/submit_run_cellmapping.sh
+pip install pyitlib
 ```
 
-## 02. submit_run_supercells.sh
-inputs:
-- filetype: gene expression matrix input file type ("npz" or "h5ad")
+## Creating Your Project Directory
+
+Create a directory for your project.
 
 ```
-bash submission_scripts/submit_run_supercells.sh
+mkdir <your_project_name>
+cd <your_project_name>
 ```
 
-## 03. submit_run_buildgrn.sh
-inputs:
-- num_networks: number of networks (set to 100 for official run, set to 2 for test run)
+Each project will be configured differently, so copy in a config file for this project.
 
-After setting this input in the script, run it from the atlas directory with: <br>
 ```
-bash submission_scripts/submit_run_buildgrn.sh
+cp ../config.py .
 ```
 
-## 04. submit_run_merge.sh
-No inputs required.
+Also copy in the pipeline runner.
+
 ```
-bash submission_scripts/submit_run_merge.sh
+cp ../run_pipeline.py .
 ```
 
-## 05. submit_run_genemembership.sh
-inputs:
-- q1_module_sizes: desired module sizes (set as the 25th percentile)
+## Configuring Project Settings
+
+Fill out `config.py` with your project and development environment details.
+
+- You may ignore (leave as is) config settings for steps you won't run
+
+## Running the SCING Pipeline
+
+To run any step, `<step>` of the SCING pipeline, run
+
 ```
-bash submission_scripts/submit_run_genemembership.sh
+python3 run_pipeline.py <step>
 ```
 
-## 06. submit_run_annotations.sh
-Must have R in your environment.
-```
-conda activate enrichr
-```
+where `<step>` must be one of 
 
-inputs:
-- rerun: set to "True" or "False" depending on whether you are rerunning jobs that did not finish in time.
-- mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
-- modules_dir: directory of gene memberships created in previous script relative to atlas root directory (e.g. gene_memberships)
-- dbs: path to all pathway enrichment databases
-- intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- q1_module_sizes: desired module sizes (MUST MATCH from step 05)
-```
-bash submission_scripts/submit_run_annotations.sh
-```
+- `cell_mapping`
+- `pseudobulking_v2`
+- `pseudobulking`
+- `build_grn`
+- `merge_networks`
+- `gene_membership`
+- `annotations`
+- `process_annotations`
 
-## 07. submit_run_processannotations.sh
-Must have R in your environment.
-```
-conda activate enrichr
-```
-inputs:
-- mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
-- intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- final_dir: directory where files of annotations of all modules within each resolution will be stored
-```
-bash submission_scripts/submit_run_processannotations.sh
-```
+## Note to Those Peeking Into `submission_scripts`
+
+You'll notice we run the shell scripts via a call to `../shell_scripts` even though `submission_scripts` and `shell_scripts` are in the same directory. This is because we intend for users to run the pipeline script from within their data directories (which are subdirectories of the cloned scNetworkAtlas repo). So, when a submission script is run, `shell_scripts` is in the parent directory of the current working directory.

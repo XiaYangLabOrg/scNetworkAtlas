@@ -16,7 +16,7 @@ then
 	sleep 10m
 	exit
 else 
-	python3 python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${iteration}
+	python3 ../python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${iteration}
 	sleep 5m
 	exit
 fi

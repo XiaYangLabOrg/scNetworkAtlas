@@ -18,4 +18,4 @@ num_lines=$(cat ${tissue_dir}/${tissue_celltype_file} | wc -l)
 echo $num_lines
 
 
-qsub -t 1-${num_lines}:1 shell_scripts/run_supercells_v2.sh ${tissue_dir}/${tissue_celltype_file} ${supercell_dir} ${celltype_col} ${sample_col} ${recluster}
+qsub -t 1-${num_lines}:1 ../shell_scripts/run_supercells_v2.sh ${tissue_dir}/${tissue_celltype_file} ${supercell_dir} ${celltype_col} ${sample_col} ${recluster}

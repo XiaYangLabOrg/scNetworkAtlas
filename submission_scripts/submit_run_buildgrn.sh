@@ -22,6 +22,6 @@ mkdir saved_networks
 mkdir saved_networks/intermediate_data/
 while read celltype;
 do
-        qsub -t 1:${num_networks} shell_scripts/run_buildgrn.sh ${celltype} ${supercell_dir}
+        qsub -t 1:${num_networks} ../shell_scripts/run_buildgrn.sh ${celltype} ${supercell_dir}
 
 done < ${supercell_dir}/$supercell_file

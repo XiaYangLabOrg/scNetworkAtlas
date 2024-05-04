@@ -2,15 +2,13 @@
 
 # PREREQUISITES: scing miniconda environment exists (build from SCING repo) #
 
-# BEFORE YOU BEGIN: fill out scing_config below with the appropriate details for your project #
+# BEFORE YOU BEGIN: fill out config.py with the appropriate details for your project #
 
-# Usage: python run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations> #
-
-# Run all steps, including setup, in the directory of your new project #
-
-# This will set up all project files and activate the environment necessary to run SCING #
+# Run all steps in the directory of your project directory #
 
 ### END OF HOW TO USE ###
+
+USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>"
 
 import sys
 
@@ -34,10 +32,7 @@ def setup():
     import shutil
     import os
 
-    # TODO: clone from Git repo once stable version is released
-
     # copy in files needed to run SCING
-    #source_base_dir = '~/scratch/dry_run_pipeline'
     source_base_dir = '..'
     source_base_dir = os.path.expanduser(source_base_dir)  # resolve the tilde character into the actual home directory (python's shutil doesn't do this automatically)
     destination_dir = '.' # current directory assumed to be new project location
@@ -104,26 +99,33 @@ def cell_mapping():
     confirm_conda_activated()
 
     config = scing_config['cell_mapping']
-    cmd = f"bash submission_scripts/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
+    cmd = f"bash ../submission_scripts/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
+    os.system(cmd)
+
+def pseudobulking_v2():
+    confirm_conda_activated()
+
+    config = scing_config['pseudobulking_v2']
+    cmd = f"bash ../submission_scripts/submit_run_supercells_v2.sh {config['celltype_col']} {config['sample_col']} {config['recluster']}"
     os.system(cmd)
 
 def pseudobulking():
     confirm_conda_activated()
 
-    config = scing_config['pseudobulking_v2']
-    cmd = f"bash submission_scripts/submit_run_supercells_v2.sh {config['celltype_col']} {config['sample_col']} {config['recluster']}"
+    config = scing_config['pseudobulking']
+    cmd = f"bash ../submission_scripts/submit_run_supercells.sh {config['filetype']}"
     os.system(cmd)
-
+    
 def build_grn():
     confirm_conda_activated()
 
-    cmd = f"bash submission_scripts/submit_run_buildgrn.sh {scing_config['build_grn']['num_networks']}"
+    cmd = f"bash ../submission_scripts/submit_run_buildgrn.sh {scing_config['build_grn']['num_networks']}"
     os.system(cmd)
 
 def merge_networks():
     confirm_conda_activated()
 
-    cmd = 'bash submission_scripts/submit_run_merge.sh'
+    cmd = 'bash ../submission_scripts/submit_run_merge.sh'
     os.system(cmd)
 
 def gene_membership():
@@ -141,9 +143,18 @@ def process_annotations():
 
     pass
 
+def clean():
+    confirmation = input("Please confirm you'd like to delete all pipeline scripts (does not delete any outputs produced by SCING, just scripts used to run scripts). (y/n): ").lower()
+    if confirmation == 'y':
+        pass # TODO: remove what was downloaded in setup
+    elif confirmation == 'n':
+        sys.exit()
+    else:
+        print("Invalid input. Please retry.")
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python3 run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
+        print(USAGE)
         sys.exit(1)
     
     step = sys.argv[1]
@@ -152,6 +163,8 @@ if __name__ == "__main__":
         setup()
     elif step == "cell_mapping":
         cell_mapping()
+    elif step == "pseudobulking_v2":
+        pseudobulking_v2()
     elif step == "pseudobulking":
         pseudobulking()
     elif step == "build_grn":
@@ -164,12 +177,12 @@ if __name__ == "__main__":
         annotations()
     elif step == "process_annotations":
         process_annotations()
+    elif step == "clean":
+        clean()
     else:
         print("Invalid step:", step)
-        print("Usage: python3 run_pipeline.py <setup|cell_mapping|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>")
+        print(USAGE)
         sys.exit(1)
 
 # -----------------------------------
 # End of Run pipeline steps
-
-## TODO: create a clean system to delete all pipeline steps (like the actual python_files dir) once the pipeline is done running and user only wants outputs. Basically delete all non-generated files

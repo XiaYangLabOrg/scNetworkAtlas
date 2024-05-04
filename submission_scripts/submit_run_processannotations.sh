@@ -38,6 +38,6 @@ mkdir ${final_dir}
 
 
 
-qsub -t 1:${num_supercells} shell_scripts/run_processannotations.sh ${supercell_dir}/${supercell_file} ${intermediate_dir} ${final_dir}
+qsub -t 1:${num_supercells} ../shell_scripts/run_processannotations.sh ${supercell_dir}/${supercell_file} ${intermediate_dir} ${final_dir}
 
 

@@ -8,7 +8,7 @@
 
 ### END OF HOW TO USE ###
 
-USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations>"
+USAGE = "python run_pipeline.py <cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations|clean>"
 
 import sys
 
@@ -25,53 +25,65 @@ def activate_conda_environment(conda_env):
 # Set up
 # -----------------------------------
 
+# these names should reflect directory names from the scNetworkAtlas GitHub repo
+dirs = ['python_files', 'shell_scripts', 'submission_scripts', 'r_files']
+
 def setup():
     # Set up project structure (copy over files)
     # -----------------------------------
-    print("\nCopying in project files...")
-    import shutil
-    import os
+#     print("\nCopying in project files...")
+#     import shutil
+#     import os
 
-    # copy in files needed to run SCING
-    source_base_dir = '..'
-    source_base_dir = os.path.expanduser(source_base_dir)  # resolve the tilde character into the actual home directory (python's shutil doesn't do this automatically)
-    destination_dir = '.' # current directory assumed to be new project location
-
-    # these names should reflect directory names from the scNetworkAtlas GitHub repo
-    dirs = ['python_files', 'shell_scripts', 'submission_scripts']
-    try:
-        for directory in dirs:
-            shutil.copytree(f'{source_base_dir}/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=False) # don't allow overwriting an existing directory
-    except FileExistsError:
-        print(f"Directory '{destination_dir}' already exists.")
-    except OSError as e:
-        print(f"Error: {e.strerror}")
-    # -----------------------------------
-    # End of Set up (copy over files)
+#     # copy in files needed to run SCING
+#     source_base_dir = '..'
+#     source_base_dir = os.path.expanduser(source_base_dir)  # resolve the tilde character into the actual home directory (python's shutil doesn't do this automatically)
+#     destination_dir = '.' # current directory assumed to be new project location
+    
+#     response = input(f"Are you sure you want to rerun setup? This will overwrite files in {dirs} and delete any modifications you made. (y/n): ").strip().lower()
+#     if response == 'y':
+#         print("Continuing setup...")
+#     elif response == 'n':
+#         print("Setup aborted.")
+#         return
+#     else:
+#         print("Invalid input. Please enter 'y' or 'n'. Exiting...")
+#         return
+    
+#     # copy in files
+#     try:
+#         for directory in dirs:
+#             shutil.copytree(f'{source_base_dir}/{directory}', f'{destination_dir}/{directory}', dirs_exist_ok=True)
+#     except FileExistsError:
+#         print(f"Directory '{destination_dir}' already exists.")
+#     except OSError as e:
+#         print(f"Error: {e.strerror}")
+#     # -----------------------------------
+#     # End of Set up (copy over files)
     
     
-    # Make bookkeeping directories
-    # -----------------------------------
-    print("\nCreating bookkeeping directories...")
+#     # Make bookkeeping directories
+#     # -----------------------------------
+# #     print("\nCreating bookkeeping directories...")
 
-    # Make directories as needed
-    os.makedirs("timing_info", exist_ok=True) # store timing metrics
-    os.makedirs("jobout", exist_ok=True) # store job logs
+# #     # Make directories as needed
+# #     os.makedirs("timing_info", exist_ok=True) # store timing metrics
+# #     os.makedirs("jobout", exist_ok=True) # store job logs
 
-    # -----------------------------------
-    # End of Make directories
+#     # -----------------------------------
+#     # End of Make directories
 
     
-    # Activate SCING conda env
-    # -----------------------------------
-    print("\nActivating conda env...")
+#     # Activate SCING conda env
+#     # -----------------------------------
+# #     print("\nActivating conda env...")
 
-    # if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
-    activate_conda_environment('scing')
+#     # if activation is not working, ensure the correct anaconda/miniconda installation is being used on your system
+#     activate_conda_environment('scing')
 
-    # -----------------------------------
-    # End of Set up conda env
-
+#     # -----------------------------------
+#     # End of Set up conda env
+    pass
     
 # -----------------------------------
 # End of Set up
@@ -144,13 +156,23 @@ def process_annotations():
     pass
 
 def clean():
-    confirmation = input("Please confirm you'd like to delete all pipeline scripts (does not delete any outputs produced by SCING, just scripts used to run scripts). (y/n): ").lower()
-    if confirmation == 'y':
-        pass # TODO: remove what was downloaded in setup
-    elif confirmation == 'n':
-        sys.exit()
-    else:
-        print("Invalid input. Please retry.")
+    # import shutil
+    
+    # confirmation = input(f"Please confirm you'd like to delete all pipeline scripts (does not delete any outputs produced by SCING, just scripts in {dirs} used to run scripts). (y/n): ").lower()
+    
+    # if confirmation == 'y':
+    #     try:
+    #         for d in dirs:
+    #             shutil.rmtree(d)
+    #             print(f"Directory '{d}' successfully deleted.")
+    #     except FileNotFoundError:
+    #         print(f"Directory '{d}' not found.")
+    #     except OSError as e:
+    #         print(f"Error: {e}")
+    # elif confirmation == 'n':
+    #     sys.exit()
+    # else:
+    #     print("Invalid input. Please retry.")
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

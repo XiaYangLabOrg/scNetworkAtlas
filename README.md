@@ -77,3 +77,5 @@ where `<step>` must be one of
 ## Note to Those Peeking Into `submission_scripts`
 
 You'll notice we run the shell scripts via a call to `../shell_scripts` even though `submission_scripts` and `shell_scripts` are in the same directory. This is because we intend for users to run the pipeline script from within their data directories (which are subdirectories of the cloned scNetworkAtlas repo). So, when a submission script is run, `shell_scripts` is in the parent directory of the current working directory.
+
+Analogous reasoning for why `shell_scripts` call Python scripts via `../python_files`

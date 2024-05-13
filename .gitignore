@@ -7,3 +7,7 @@ __pycache__/
 network_validation/
 combined_networks/
 .gitmodules
+**/.ipynb_checkpoints
+mock_new_project/python_files
+mock_new_project/shell_scripts
+mock_new_project/submission_scripts

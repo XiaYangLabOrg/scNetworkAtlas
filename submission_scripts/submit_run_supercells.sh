@@ -28,4 +28,4 @@ num_lines=$(cat ${tissue_dir}/${tissue_celltype_file} | wc -l)
 echo $num_lines
 
 
-qsub -t 1-${num_lines}:1 shell_scripts/run_supercells.sh ${tissue_dir} ${tissue_celltype_file} ${supercell_dir} ${filetype}
+qsub -t 1-${num_lines}:1 ../shell_scripts/run_supercells.sh ${tissue_dir} ${tissue_celltype_file} ${supercell_dir} ${filetype}

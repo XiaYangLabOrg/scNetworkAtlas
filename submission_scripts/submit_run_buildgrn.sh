@@ -2,7 +2,7 @@
 
 # Run from root directory /path/to/Allen_10X/
 ##### INPUTS #####
-num_networks=100
+num_networks=$1
 ##################
 
 supercell_dir="supercells"
@@ -20,6 +20,6 @@ echo $num_lines
 
 while read celltype;
 do
-    qsub -t 1:${num_networks} shell_scripts/run_buildgrn.sh $celltype $supercell_dir $out_dir
+    qsub -t 1:${num_networks} ../shell_scripts/run_buildgrn.sh ${celltype} ${supercell_dir}
 
 done < $supercell_file

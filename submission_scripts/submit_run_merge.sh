@@ -23,6 +23,6 @@ echo $num_lines
 
 for consensus in ${consensus_thresholds[@]}
 do
-    qsub -t 1-${num_lines}:1 shell_scripts/run_merge.sh $supercell_dir $supercell_file $consensus $intermediate_dir $out_dir
+    qsub -t 1-${num_lines}:1 ../shell_scripts/run_merge.sh $supercell_dir $supercell_file $consensus $intermediate_dir $out_dir
 done
 

@@ -48,4 +48,4 @@ if __name__ == "__main__":
 	all_edges = merger.edge_df.sort_values(by='importance',
                           ascending=False)
 
-	all_edges.to_csv(outfile)
+	all_edges.to_csv(outfile, index = False)

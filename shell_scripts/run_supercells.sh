@@ -6,12 +6,11 @@
 # module load anaconda3
 # conda activate scing
 
-tissue_dir=$1
-tissue_celltype_file=$2
-supercell_dir=$3
+tissue_celltype_file=$1
+supercell_dir=$2
+celltype_col=$3
 filetype=$4
 counter=1
-cd $tissue_dir
 while read line;
 do
 	if [ $SGE_TASK_ID = $counter ]
@@ -22,7 +21,8 @@ do
 			sleep 10m
 			exit
 		else
-			python3 ../python_files/BuildSupercells.py ${line}.${filetype}
+			python3 ../python_files/BuildSupercells.py ${line}.${filetype} ${supercell_dir} --stratify_by $celltype_col
+
 			echo "sleeping"
 			sleep 5m 
 			exit

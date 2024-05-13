@@ -21,7 +21,7 @@ do
 		else
 			echo "MergeNetworks.py started on: " `date `
 			echo " "
-			python3 ../python_files/MergeNetworks.py ${supercell_dir}/${line}.h5ad ${intermediate_dir}/${line}/ $consensus $out_file
+			python3 ../python_files/MergeNetworks.py ${supercell_dir}/${line}.h5ad ${intermediate_dir}/${line}/ $out_file --consensus $consensus
 			echo "Job $JOB_ID end on: " `date `
 			echo " "
 			sleep 5m

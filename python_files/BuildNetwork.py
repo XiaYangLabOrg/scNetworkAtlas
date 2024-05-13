@@ -8,12 +8,22 @@ import sys
 from scing import build
 import warnings
 warnings.filterwarnings("ignore")
+import argparse
 
-adata_file = sys.argv[1]
-outfile = sys.argv[2]
-seed = int(sys.argv[3])
+parser = argparse.ArgumentParser(description="Build Intermediate GRNs")
+parser.add_argument('adata_file', type=str, help='path to pseudobulk h5ad file')
+parser.add_argument('outfile', type=str, help='output filename')
+parser.add_argument('-s','--seed', type=int, help='random seed', default=0)
 
-adata = sc.read(adata_file)
+args = parser.parse_args()
+adata_file = args.adata_file
+outfile = args.outfile
+seed = args.seed
+print(f"adata_file: {adata_file}\n\
+outfile: {outfile}\n\
+seed: {seed}")
+
+adata = sc.read_h5ad(adata_file)
 
 ########################################GENES FILTER##############################
 # sc.pp.filter_genes(adata_saved, min_cells = (0.1*adata_saved.shape[0]), inplace=True, copy=False)

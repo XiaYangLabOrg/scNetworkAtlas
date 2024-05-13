@@ -13,18 +13,31 @@ scing_config = {
         'celltype_column': "celltypes"
     },
     'pseudobulking': {
-        'filetype': 'npz' # npz or h5ad
+        'tissue_dir': "tissue_adata",
+        'supercell_dir': "supercells",
+        'filetype': "h5ad", # npz or h5ad
+        'celltype_col': "celltypes",
+        'tissue_celltype_file': 'tissue_celltype_file.txt',
     },
     'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
-        'celltype_col': 'Cell.Type',
-        'sample_col': 'SampleID',
-        'recluster': True,
+        'tissue_dir': 'tissue_adata',
+        'supercell_dir':'supercells',
+        'celltype_col': 'celltypes',
+        'sample_col': 'sample',
+        'tissue_celltype_file':'tissue_celltype_file.txt',
     },
     'build_grn': {
-        'num_networks': 100
+        'num_networks': 100,
+        'supercell_dir':"supercells",
+        'supercell_file':"supercells/supercells.txt",
+        'out_dir':"saved_networks/intermediate_data",
     },
     'merge_networks': {
-        'config': None # no inputs needed for merge networks step
+        'supercell_dir': "supercells",
+        'supercell_file': "supercells/supercells.txt",
+        'intermediate_dir': "saved_networks/intermediate_data",
+        'consensus_thresholds': 0.5, # need to figure out how feed a list of values to bash
+        'out_dir': "saved_networks/final_edges",
     },
     'gene_membership': {
         'q1_module_sizes': ('20' '35' '50')

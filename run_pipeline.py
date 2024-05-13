@@ -118,26 +118,26 @@ def pseudobulking_v2():
     confirm_conda_activated()
 
     config = scing_config['pseudobulking_v2']
-    cmd = f"bash ../submission_scripts/submit_run_supercells_v2.sh {config['celltype_col']} {config['sample_col']} {config['recluster']}"
+    cmd = f"bash ../submission_scripts/submit_run_supercells_v2.sh {config['tissue_dir']} {config['supercell_dir']} {config['celltype_col']} {config['sample_col']} {config['tissue_celltype_file']}"
     os.system(cmd)
 
 def pseudobulking():
     confirm_conda_activated()
 
     config = scing_config['pseudobulking']
-    cmd = f"bash ../submission_scripts/submit_run_supercells.sh {config['filetype']}"
+    cmd = f"bash ../submission_scripts/submit_run_supercells.sh {config['tissue_dir']} {config['supercell_dir']} {config['filetype']} {config['celltype_col']} {config['tissue_celltype_file']}"
     os.system(cmd)
     
 def build_grn():
     confirm_conda_activated()
-
-    cmd = f"bash ../submission_scripts/submit_run_buildgrn.sh {scing_config['build_grn']['num_networks']}"
+    config = scing_config['build_grn']
+    cmd = f"bash ../submission_scripts/submit_run_buildgrn.sh {config['num_networks']} {config['supercell_dir']} {config['supercell_file']} {config['out_dir']}"
     os.system(cmd)
 
 def merge_networks():
     confirm_conda_activated()
-
-    cmd = 'bash ../submission_scripts/submit_run_merge.sh'
+    config = scing_config['merge_networks']
+    cmd = f"bash ../submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {config['consensus_thresholds']} {config['out_dir']}"
     os.system(cmd)
 
 def gene_membership():

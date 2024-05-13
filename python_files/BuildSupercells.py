@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 
 # Set number of threads to use
 import os
@@ -16,9 +14,25 @@ warnings.filterwarnings("ignore")
 
 import sys
 from scing import supercellHelpers as pb
+import argparse
 
+parser = argparse.ArgumentParser(description="Supercells")
+parser.add_argument('dataset_name', type=str, help='path to data h5ad file')
+parser.add_argument('out_dir', type=str, help='output directory')
+parser.add_argument('--stratify_by', nargs='+', type=str, help='a list of column names to stratify by (e.g. cell_type_column sample_column). Separated by whitespace')
 
-dataset_name = sys.argv[1]
+args = parser.parse_args()
+dataset_name = args.dataset_name
+out_dir = args.out_dir
+stratify_by = args.stratify_by
+# Remove any "None" strings
+if stratify_by:
+    stratify_by = [i for i in stratify_by if i!='None']
+    if len(stratify_by) == 0:
+        stratify_by = None 
+print(f"dataset_name: {dataset_name}\n\
+out_dir: {out_dir}\n\
+stratify_by: {stratify_by}")
 
 if dataset_name.endswith('.npz'):
     humanMATRIX = load_npz(dataset_name)
@@ -38,11 +52,23 @@ else:
     adata = sc.read_h5ad(dataset_name)
     #create outfile as a variable to store the cell type name
     outfile = dataset_name.split("/")[-1].split(".h5ad")[0]
+
 #make the supercell
-adata_merged = pb.supercell_pipeline(adata,
-                                  ngenes=2000,
-                                  npcs=20,
-                                  ncell=500,
-                                  verbose=True)
-os.makedirs('../supercells',exist_ok=True)
-adata_merged.write('../supercells/'+str(outfile)+'.h5ad')
+if stratify_by:
+    for colnames,df in adata.obs.groupby(stratify_by):
+        adata_ct = adata[df.index]
+        adata_merged = pb.supercell_pipeline(adata_ct,
+                                        ngenes=2000,
+                                        npcs=20,
+                                        ncell=500,
+                                        verbose=True)
+        os.makedirs(out_dir,exist_ok=True)
+        adata_merged.write(f'{out_dir}/{outfile}_{"_".join(colnames)}.h5ad')
+else:
+    adata_merged = pb.supercell_pipeline(adata,
+                                    ngenes=2000,
+                                    npcs=20,
+                                    ncell=500,
+                                    verbose=True)
+    os.makedirs(out_dir,exist_ok=True)
+    adata_merged.write(f'{out_dir}/{outfile}.h5ad')

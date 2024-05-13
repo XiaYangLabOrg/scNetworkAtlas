@@ -3,14 +3,14 @@
 # Run from root directory /path/to/Allen_10X/
 
 # make final network directory
-supercell_dir="supercells"
-supercell_file="supercells/supercells.txt"
-intermediate_dir="saved_networks/intermediate_data"
+supercell_dir=$1
+supercell_file=$2
+intermediate_dir=$3
 # if testing multiple consensus thresholds
 # consensus_thresholds=(0.2 0.5 0.8 1.0)
 # if running one consensus threshold
-consensus_thresholds=0.5
-out_dir="saved_networks/final_edges"
+consensus_thresholds=$4
+out_dir=$5
 
 mkdir -p $out_dir
 if [ ! -f ${supercell_file} ]

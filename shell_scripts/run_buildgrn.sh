@@ -15,7 +15,7 @@ then
 else 
 	echo "BuildNetwork.py started on: " `date `
 	echo " "
-	python3 ../python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${out_file} ${iteration}
+	python3 ../python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${out_file} --seed ${iteration}
 	echo "Job $JOB_ID end on: " `date `
 	echo " "
 	sleep 5m

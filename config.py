@@ -36,18 +36,18 @@ scing_config = {
         'supercell_dir': "supercells",
         'supercell_file': "supercells/supercells.txt",
         'intermediate_dir': "saved_networks/intermediate_data",
-        'consensus_thresholds': 0.5, # need to figure out how feed a list of values to bash
+        'consensus_thresholds': [0.2, 0.5, 0.8], # any size list
         'out_dir': "saved_networks/final_edges",
     },
     'gene_membership': {
-        'q1_module_sizes': ('20' '35' '50')
+        'q1_module_sizes': [20, 35, 50]
     },
     'annotations': {
         'rerun': "False",
         'mode': "test", # test or default
         'dbs': "/u/scratch/m/mikechen/pathway_databases/genesets/human_toy", # human or mouse
         'num_cores': 12,
-        'q1_module_sizes': ('20' '35' '50'), # should match gene_membership config
+        'q1_module_sizes': [20, 35, 50], # should match gene_membership config
         'modules_dir': 'gene_memberships/',
         'intermediate_dir': './pathway_annotations/intermediate_annotations'
     },

@@ -137,7 +137,11 @@ def build_grn():
 def merge_networks():
     confirm_conda_activated()
     config = scing_config['merge_networks']
-    cmd = f"bash ../submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {config['consensus_thresholds']} {config['out_dir']}"
+
+    # pass as string to submission script
+    consensus_str = ','.join(map(str, scing_config['merge_networks']['consensus_thresholds']))
+
+    cmd = f"bash ../submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {consensus_str} {config['out_dir']}"
     os.system(cmd)
 
 def gene_membership():

@@ -9,8 +9,11 @@ intermediate_dir=$3
 # if testing multiple consensus thresholds
 # consensus_thresholds=(0.2 0.5 0.8 1.0)
 # if running one consensus threshold
-consensus_thresholds=$4
+consensus_str=$4
 out_dir=$5
+
+# convert consensus str into array
+IFS=',' read -r -a consensus_thresholds <<< "$consensus_str"
 
 mkdir -p $out_dir
 if [ ! -f ${supercell_file} ]

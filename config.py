@@ -2,6 +2,7 @@
 # -----------------------------------
 
 # Configuration settings (these settings are read into submission scripts)
+scing_scripts_base_dir = "/u/home/k/kylepu/scratch/env_vars_playground" # directory storing cloned scGRNdb repo
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 scing_config = {
     'conda_init_script': '~/project-xyang123/miniconda3/etc/profile.d/conda.sh',
@@ -13,41 +14,29 @@ scing_config = {
         'celltype_column': "celltypes"
     },
     'pseudobulking': {
-        'tissue_dir': "tissue_adata",
-        'supercell_dir': "supercells",
-        'filetype': "h5ad", # npz or h5ad
-        'celltype_col': "celltypes",
-        'tissue_celltype_file': 'tissue_celltype_file.txt',
+        'filetype': 'npz' # npz or h5ad
     },
     'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
-        'tissue_dir': 'tissue_adata',
-        'supercell_dir':'supercells',
-        'celltype_col': 'celltypes',
-        'sample_col': 'sample',
-        'tissue_celltype_file':'tissue_celltype_file.txt',
+        'celltype_col': 'Cell.Type',
+        'sample_col': 'SampleID',
+        'recluster': True,
     },
     'build_grn': {
-        'num_networks': 100,
-        'supercell_dir':"supercells",
-        'supercell_file':"supercells/supercells.txt",
-        'out_dir':"saved_networks/intermediate_data",
+        'num_networks': 100
     },
     'merge_networks': {
-        'supercell_dir': "supercells",
-        'supercell_file': "supercells/supercells.txt",
-        'intermediate_dir': "saved_networks/intermediate_data",
-        'consensus_thresholds': [0.2, 0.5, 0.8], # any size list
-        'out_dir': "saved_networks/final_edges",
+#        'config': None # no inputs needed for merge networks step
+        'consensus': [0.2, 0.6, 0.8]
     },
     'gene_membership': {
-        'q1_module_sizes': [20, 35, 50]
+        'q1_module_sizes': ('20' '35' '50')
     },
     'annotations': {
         'rerun': "False",
         'mode': "test", # test or default
         'dbs': "/u/scratch/m/mikechen/pathway_databases/genesets/human_toy", # human or mouse
         'num_cores': 12,
-        'q1_module_sizes': [20, 35, 50], # should match gene_membership config
+        'q1_module_sizes': ('20' '35' '50'), # should match gene_membership config
         'modules_dir': 'gene_memberships/',
         'intermediate_dir': './pathway_annotations/intermediate_annotations'
     },

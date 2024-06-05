@@ -14,12 +14,19 @@ scing_config = {
         'celltype_column': "celltypes"
     },
     'pseudobulking': {
-        'filetype': 'npz' # npz or h5ad
+        'tissue_dir': "tissue_adata",
+        'supercell_dir': "supercells",
+        'filetype': "npz", # npz or h5ad
+        'celltype_col': "celltypes",
+        'tissue_celltype_file': 'tissue_celltype_file.txt',
     },
     'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
+        'tissue_dir': 'tissue_adata',
+        'supercell_dir':'supercells',
+        'tissue_celltype_file':'tissue_celltype_file.txt',        
         'celltype_col': 'Cell.Type',
         'sample_col': 'SampleID',
-        'recluster': True,
+        'recluster': True, # TODO: not used yet
     },
     'build_grn': {
         'num_networks': 100

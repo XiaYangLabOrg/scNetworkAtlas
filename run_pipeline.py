@@ -8,26 +8,13 @@
 
 ### END OF HOW TO USE ###
 
-USAGE = "python run_pipeline.py <cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations|clean>"
+USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations|clean>"
 
 import os
 import sys
 
 # Fetch config from current dir
-from config import scing_scripts_base_dir, base_dir, scing_config
-
-# Set up environment variable for pipeline scripts location
-pipeline_scripts_env_name = "SCING_SCRIPTS_DIR"
-if pipeline_scripts_env_name in os.environ:
-    existing_dir = os.environ[pipeline_scripts_env_name]
-    if existing_dir != scing_scripts_base_dir:
-        print(f"Warning: {pipeline_scripts_env_name} is already set to {existing_dir}. Overriding it with {scing_scripts_base_dir}.")
-    else:
-        print(f"{pipeline_scripts_env_name} is already correctly set to {scing_scripts_base_dir}.")
-else:
-    print(f"Setting {pipeline_scripts_env_name} to {scing_scripts_base_dir}.")
-
-os.environ[pipeline_scripts_env_name] = scing_scripts_base_dir
+from config import base_dir, scing_config
 
 def activate_conda_environment(conda_env):
     try:
@@ -106,7 +93,15 @@ def setup():
 
 # Run pipeline steps
 # -----------------------------------
-
+def setup():
+    for tmp in ["submission_scripts", "python_files", "r_files", "shell_scripts"]:
+        os.makedirs(f"temp/{tmp}", exist_ok=True)
+    print("copying scripts")
+    cmds = scing_config['copy_cmds']
+    for cmd in cmds:
+        os.system(cmd)
+    print("done copying scripts")
+    
 def confirm_conda_activated():
     confirmation = input("Is your scing conda environment activated? (y/n): ").lower()
     if confirmation == 'y':
@@ -123,28 +118,28 @@ def cell_mapping():
     confirm_conda_activated()
 
     config = scing_config['cell_mapping']
-    cmd = f"bash {os.environ[pipeline_scripts_env_name]}/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
+    cmd = f"bash temp/submission_scripts/submit_run_cellmapping.sh {base_dir} {config['mapping_file']} {config['adata_dir']} {config['celltype_column']}"
     os.system(cmd)
 
 def pseudobulking_v2():
     confirm_conda_activated()
 
     config = scing_config['pseudobulking_v2']
-    cmd = f"bash {os.environ[pipeline_scripts_env_name]}/submission_scripts/submit_run_supercells_v2.sh {config['tissue_dir']} {config['supercell_dir']} {config['celltype_col']} {config['sample_col']} {config['tissue_celltype_file']}"
+    cmd = f"bash temp/submission_scripts/submit_run_supercells_v2.sh {config['tissue_dir']} {config['supercell_dir']} {config['celltype_col']} {config['sample_col']} {config['tissue_celltype_file']}"
     os.system(cmd)
 
 def pseudobulking():
     confirm_conda_activated()
 
     config = scing_config['pseudobulking']
-    cmd = f"bash {os.environ[pipeline_scripts_env_name]}/submission_scripts/submit_run_supercells.sh {config['tissue_dir']} {config['supercell_dir']} {config['filetype']} {config['celltype_col']} {config['tissue_celltype_file']}"
+    cmd = f"bash temp/submission_scripts/submit_run_supercells.sh {config['tissue_dir']} {config['supercell_dir']} {config['filetype']} {config['celltype_col']} {config['tissue_celltype_file']}"
     os.system(cmd)
     
 def build_grn():
     confirm_conda_activated()
 
     config = scing_config['build_grn']
-    cmd = f"bash {os.environ[pipeline_scripts_env_name]}/submission_scripts/submit_run_buildgrn.sh {config['num_networks']} {config['supercell_dir']} {config['supercell_file']} {config['out_dir']}"
+    cmd = f"bash temp/submission_scripts/submit_run_buildgrn.sh {config['num_networks']} {config['supercell_dir']} {config['supercell_file']} {config['out_dir']} {config['ncore']} {config['mem_per_core']}"
     os.system(cmd)
 
 def merge_networks():
@@ -152,7 +147,7 @@ def merge_networks():
 
     config = scing_config['merge_networks']
     consensus_str = ','.join(map(str, config['consensus'])) # pass as string to submission script
-    cmd = f"bash {os.environ[pipeline_scripts_env_name]}/submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {consensus_str} {config['out_dir']}"
+    cmd = f"bash temp/submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {consensus_str} {config['out_dir']} {config['ncore']} {config['mem_per_core']}"
     os.system(cmd)
 
 def gene_membership():

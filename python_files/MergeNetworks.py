@@ -46,8 +46,8 @@ if __name__=='__main__':
 					all_edges,
 					consensus,
 					remove_cycles,
-					outdir,
-					outfile.split("/")[-1],
+					outdir=outdir,
+					prefix=str(outfile.split("/")[-1].split(".")[0]+str(consensus)),
 					ncore=psutil.cpu_count(),
 					mem_per_core="auto",
 					verbose=True)

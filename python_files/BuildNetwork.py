@@ -9,6 +9,7 @@ from scing import build
 import warnings
 warnings.filterwarnings("ignore")
 import argparse
+import psutil
 
 parser = argparse.ArgumentParser(description="Build Intermediate GRNs")
 parser.add_argument('adata_file', type=str, help='path to pseudobulk h5ad file')
@@ -19,9 +20,13 @@ args = parser.parse_args()
 adata_file = args.adata_file
 outfile = args.outfile
 seed = args.seed
+
+if mem_per_core == 0:
+    mem_per_core = "auto"
 print(f"adata_file: {adata_file}\n\
 outfile: {outfile}\n\
-seed: {seed}")
+seed: {seed}"
+)
 
 adata = sc.read_h5ad(adata_file)
 
@@ -37,8 +42,8 @@ scing = build.grnBuilder(adata=adata,
                          subsample_perc=0.7,
                          prefix=outfile.split("/")[-1],
                          outdir=outdir,
-                         ncore=1,
-                         mem_per_core="auto",
+                         ncore=psutil.cpu_count(),
+                         mem_per_core='auto',
                          verbose=True,
                          random_state=seed)
 scing.subsample_cells()

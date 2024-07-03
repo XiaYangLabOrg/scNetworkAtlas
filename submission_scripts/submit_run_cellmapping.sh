@@ -11,4 +11,6 @@ celltype_column=$4
 tissue_dir="tissue_adata/"
 mkdir $tissue_dir
 
-qsub ../shell_scripts/run_cellmapping.sh ${mapping_file} ${adata_dir} ${celltype_column} ${tissue_dir}
+# echo current dir
+echo "Current directory: $(pwd)"
+qsub temp/shell_scripts/run_cellmapping.sh ${mapping_file} ${adata_dir} ${celltype_column} ${tissue_dir}

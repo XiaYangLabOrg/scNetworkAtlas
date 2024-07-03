@@ -23,7 +23,7 @@ do
 			sleep 120
 			exit
 		else
-			Rscript --vanilla ../r_files/ProcessAnnotations.r ${line} ${intermediate_dir} ${final_dir}
+			Rscript --vanilla temp/r_files/ProcessAnnotations.r ${line} ${intermediate_dir} ${final_dir}
 			sleep 5m
 			exit
 		fi

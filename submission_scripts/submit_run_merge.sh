@@ -11,6 +11,8 @@ intermediate_dir=$3
 # if running one consensus threshold
 consensus_str=$4
 out_dir=$5
+ncore=$6
+mem_per_core=$7
 
 # convert consensus str into array
 IFS=',' read -r -a consensus_thresholds <<< "$consensus_str"
@@ -26,6 +28,6 @@ echo $num_lines
 
 for consensus in ${consensus_thresholds[@]}
 do
-    qsub -t 1-${num_lines}:1 ../shell_scripts/run_merge.sh $supercell_dir $supercell_file $consensus $intermediate_dir $out_dir
+    qsub -t 1-${num_lines}:1 -l h_rt=23:00:00,h_data=${mem_per_core}G -pe shared ${ncore} temp/shell_scripts/run_merge.sh $supercell_dir $supercell_file $consensus $intermediate_dir $out_dir
 done
 

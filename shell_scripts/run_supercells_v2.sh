@@ -23,7 +23,7 @@ do
 			sleep 10m
 			exit
 		else
-			python3 ../python_files/BuildSupercells_v2.py ${line}.h5ad ${supercell_dir} --stratify_by ${celltype_col} ${sample_col} --save_by ${celltype_col} ${sample_col}
+			python3 temp/python_files/BuildSupercells_v2.py ${line}.h5ad ${supercell_dir} --stratify_by ${celltype_col} ${sample_col} --save_by ${celltype_col} ${sample_col}
 			echo "sleeping"
 			sleep 5m 
 			exit

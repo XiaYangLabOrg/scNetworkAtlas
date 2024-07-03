@@ -21,7 +21,7 @@ do
 			sleep 5m
 			exit
 		else
-			python3 ../python_files/ModuleBasedDimensionalityReduction.py ./saved_networks/final_edges/${line}.csv.gz ${outfile} ${q1_size}
+			python3 temp/python_files/ModuleBasedDimensionalityReduction.py ./saved_networks/final_edges/${line}.csv.gz ${outfile} ${q1_size}
 			echo "sleeping"
 			sleep 5m
 			exit

@@ -7,7 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import scanpy as sc
-from scing import supercellHelpers as pb
+from scing import supercells as pb
 import scipy.sparse
 from scipy.sparse import load_npz 
 import warnings

@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#$ -cwd -V -N MERGENETWORKS -l h_data=4G,h_rt=23:59:59 -pe shared 12 -M eplau -m a -j y -o jobout/MERGE.$JOB_ID
+#$ -cwd -V -N MERGENETWORKS -j y -o jobout/MERGE.$JOB_ID
+
 supercell_dir=$1
 supercell_file=$2
 consensus=$3
 intermediate_dir=$4
 out_dir=$5
-
 
 counter=1
 while read line;
@@ -21,7 +21,7 @@ do
 		else
 			echo "MergeNetworks.py started on: " `date `
 			echo " "
-			python3 ../python_files/MergeNetworks.py ${supercell_dir}/${line}.h5ad ${intermediate_dir}/${line}/ $out_file --consensus $consensus
+			python temp/python_files/MergeNetworks.py ${supercell_dir}/${line}.h5ad ${intermediate_dir}/${line}/ $out_file --consensus $consensus
 			echo "Job $JOB_ID end on: " `date `
 			echo " "
 			sleep 5m

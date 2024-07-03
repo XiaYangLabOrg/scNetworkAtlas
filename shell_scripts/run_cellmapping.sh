@@ -11,7 +11,7 @@ celltype_column=$3
 tissue_dir=$4
 cd $tissue_dir
 
-python3 ../python_files/CellMapping.py $mapping_file $adata_dir $celltype_column
+python3 ../temp/python_files/CellMapping.py $mapping_file $adata_dir $celltype_column
 
 echo "sleeping"
 sleep 5m

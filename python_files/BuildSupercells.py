@@ -63,7 +63,10 @@ if stratify_by:
                                         ncell=500,
                                         verbose=True)
         os.makedirs(out_dir,exist_ok=True)
-        adata_merged.write(f'{out_dir}/{outfile}_{"_".join(colnames)}.h5ad')
+        if isinstance(colnames, str):
+            adata_merged.write(f'{out_dir}/{outfile}_{colnames}.h5ad')
+        else:
+            adata_merged.write(f'{out_dir}/{outfile}_{"_".join(colnames)}.h5ad')
 else:
     adata_merged = pb.supercell_pipeline(adata,
                                     ngenes=2000,

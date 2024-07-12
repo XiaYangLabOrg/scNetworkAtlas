@@ -21,5 +21,5 @@ echo $num_lines
 
 while read celltype;
 do
-    qsub -t 1:${num_networks} -l h_rt=3:00:00,h_data=${mem_per_core}G -pe shared ${ncore} temp/shell_scripts/run_buildgrn.sh ${celltype} ${supercell_dir} ${out_dir}
+    qsub -t 1:${num_networks} -l h_rt=23:00:00,h_data=${mem_per_core}G -pe shared ${ncore} temp/shell_scripts/run_buildgrn.sh ${celltype} ${supercell_dir} ${out_dir}
 done < $supercell_file

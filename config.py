@@ -11,7 +11,7 @@ scing_config = {
     'copy_cmds': 
             [f"cp -r {main_branch_path}shell_scripts/* temp/shell_scripts/",
              f"cp -r {main_branch_path}submission_scripts/* temp/submission_scripts/",
-             f"cp -r {main_branch_path}python_files/* temp/python_files/"] 
+             f"cp -r {main_branch_path}python_files/* temp/python_files/"],
         
     'cell_mapping': {
         'base_dir': base_dir,
@@ -22,7 +22,7 @@ scing_config = {
     'pseudobulking': {
         'tissue_dir': "tissue_adata",
         'supercell_dir': "supercells",
-        'filetype': "npz", # npz or h5ad
+        'filetype': "h5ad", # npz or h5ad
         'celltype_col': "celltypes",
         'tissue_celltype_file': 'tissue_celltype_file.txt',
     },
@@ -38,17 +38,16 @@ scing_config = {
         'num_networks': 100,
         'supercell_dir': 'supercells',
         'supercell_file': 'supercell_file.txt',
-        'out_dir': "intermediate_networks",
+        'out_dir': "saved_networks/intermediate_networks",
         'ncore': 1,
-        'mem_per_core': 60,
+        'mem_per_core': 16,
     },
     'merge_networks': {
         'supercell_dir': 'supercells',
         'supercell_file': 'supercell_file.txt',
-        'intermediate_dir': 'intermediate_networks',
-#        'config': None # no inputs needed for merge networks step
-        'consensus': [0.2, 0.5, 0.8],
-        'out_dir': 'final_networks',
+        'intermediate_dir': 'saved_networks/intermediate_networks',
+        'consensus': [0.2, 0.5, 0.8], # must be list
+        'out_dir': 'saved_networks/final_networks',
         'ncore': 12,
         'mem_per_core': 4 
     },

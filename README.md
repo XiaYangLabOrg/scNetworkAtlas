@@ -7,6 +7,7 @@ If you have not installed SCING, follow the installation instructions and conda 
 ```bash
 cd /path/to/SCING/repo
 git pull origin
+cd ../
 ```
 
 

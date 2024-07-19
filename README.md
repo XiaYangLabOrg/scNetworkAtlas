@@ -1,78 +1,45 @@
-## To Do
-
 # SCING Pipeline
 
 ## Installing the Pipeline
 
-First, clone this repository.
+If you have not installed SCING, follow the installation instructions and conda environment setup in the SCING repo [here](https://github.com/XiaYangLabOrg/SCING). Be sure that SCING version is up to date with the following.
 
+```bash
+cd /path/to/SCING/repo
+git pull origin/main
 ```
+
+
+Then, clone this repository.
+
+```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 ```
 
 Now, checkout a new local branch that tracks the scGRNdb.v1 branch.
 
-```
+```bash
 cd scNetworkAtlas
 git checkout --track origin/scGRNdb.v1
-```
-
-Next, create a conda environment for SCING.
-
-```
-conda env create -n scing --file install/scing.environment.yml 
-conda activate scing
-```
-
-TODO: I don't know why we need this package lol
-
-```
-pip install pyitlib
-```
-
-If you want to use the AUCell from SCENIC for graph based dimensionality reduction you must install pyscenic  
-
-```
-pip install pyscenic
-```
-
-If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr OR use any R environment you have. Be sure that 'foreach' and 'doParallel' are installed in your R environment.
-
-```  
-conda env create -n enrichr --file install/pathway.environment.yml
-conda activate enrichr
-# install inside R
-R
-> install.packages('foreach')
-> install.packages('doParallel')
-> quit()
 ```
 
 ## Creating Your Project Directory
 
 Create a directory for your project.
 
-```
+```bash
 mkdir <your_project_name>
 cd <your_project_name>
 ```
 
-Each project will be configured differently, so copy in a config file for this project.
+Each project will be configured differently, so copy in a config and run_pipeline file for this project.
 
-```
-cp ../config.py .
-```
-
-Also copy in the pipeline runner.
-
-```
-cp ../run_pipeline.py .
+```bash
+cp /path/to/scNetworkAtlas/config.py .
+cp /paty/to/scNetworkAtlas/run_pipeline.py .
 ```
 
 Note to those who have used previous versions of this repository:
-
-- Each project directory no longer needs its own copy of submission scripts
-- `run_pipeline.py` handles proper submission as long as your `config.py` is properly filled out
 
 ## Configuring Project Settings
 
@@ -84,28 +51,95 @@ Fill out `config.py` with your project and development environment details.
 
 To run any step, `<step>` of the SCING pipeline, run
 
-```
+```bash
 python3 run_pipeline.py <step>
 ```
 
 where `<step>` must be one of 
 
-- `cell_mapping`
-- `pseudobulking_v2`
-- `pseudobulking`
-- `build_grn`
-- `merge_networks`
+- [`setup`](#setup)
+- [`cell_mapping`](#cell_mapping)
+- [`pseudobulking`](#pseudobulking-supercells)
+- [`build_grn`](#build_grn)
+- [`merge_networks`](#merge-networks)
+
+*In progress*
+
 - `gene_membership`
 - `annotations`
 - `process_annotations`
 
-## Note to Those Peeking Into `submission_scripts`
+### Setup
 
-You'll notice we run the shell scripts via a call to `../shell_scripts` even though `submission_scripts` and `shell_scripts` are in the same directory. This is because we intend for users to run the pipeline script from within their data directories (which are subdirectories of the cloned scNetworkAtlas repo). So, when a submission script is run, `shell_scripts` is in the parent directory of the current working directory.
+This step copies all submission, shell, and python scripts to your project directory.
 
-Analogous reasoning for why `shell_scripts` call Python scripts via `../python_files`
+Inputs:
 
-## Old README Stuff
+- `main_branch_path`: path to scNetworkAtlas
+- `base_dir`: for cell atlas projects, this is the cell atlas data directory. For other projects, this is your project directory
+- `conda_init_script`: path to conda.sh, normally /path/to/miniconda3/etc/profile.d/conda.sh
+
+### Cell_mapping
+
+This step updates cell type labels in your single cell data. If you already have the cell type labels, you can skip this step.
+
+Inputs:
+
+- `base_dir`: same as setup `base_dir`
+- `mapping_file`: tab-separated file with columns for `Original Cell Type` and - - `Broader Cell Type`
+- `adata_dir`: path to adata directory
+- `celltype_column`: cell type column in the single cell object
+
+### Pseudobulking (Supercells)
+
+This step performs the cell pseudobulking using leiden clustering.
+
+Inputs:
+
+- `tissue_dir`: path to adata directory
+- `supercell_dir`: output pseudobuolk adata directory
+- `filetype`: file type for counts data (h5ad or npz)
+- `celltype_col`: cell type column in the single cell object
+- `tissue_celltype_file`: name of txt file to store all existing adata paths
+
+### Build_grn
+
+This step builds intermediate GRNs by bootstrapping the pseudobulk cells.
+
+Inputs:
+
+- `num_networks`: number of intermediate networks
+- `supercell_dir`: pseudobulk adata directory
+- `supercell_file`: name of txt file to store all existing supercell file paths
+- `out_dir`: output directory
+- `ncore`: number of cores used to build each network (default is 1)
+- `mem_per_core`: memory per core in GB (default is 16)
+
+### Merge Networks
+
+This step merges intermediate GRNs.
+
+Inputs:
+
+- `supercell_dir`: pseudobulk adata directory
+- `supercell_file`: name of txt file to store all existing supercell file paths
+- `intermediate_dir`: directory to intermediate networks
+- `consensus`: list of consensus thresholds to test (default is [0.5])
+- `out_dir`: output directory
+- `ncore`: number of cores used to build each network (default is 12)
+- `mem_per_core`: memory per core in GB (default is 4)
+
+### Gene_membership (In Progress)
+
+This step performs module detection in the final network.
+
+
+### Pathway Enrichment (In Progress)
+
+This step performs pathway enrichment on modules
+
+<!-- 
+## Updates in Progress
 
 ## 05. submit_run_genemembership.sh
 inputs:
@@ -142,4 +176,4 @@ inputs:
 - final_dir: directory where files of annotations of all modules within each resolution will be stored
 ```
 bash submission_scripts/submit_run_processannotations.sh
-```
+``` -->

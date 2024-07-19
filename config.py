@@ -2,7 +2,7 @@
 # -----------------------------------
 
 # Configuration settings (these settings are read into submission scripts)
-main_branch_path = "/u/home/s/skikuchi/project-xyang123/scNetworkAtlas/"
+main_branch_path = "/u/scratch/m/mikechen/scNetworkAtlas/"
 #cloned scGRNdb repo
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 
@@ -37,16 +37,16 @@ scing_config = {
     'build_grn': {
         'num_networks': 100,
         'supercell_dir': 'supercells',
-        'supercell_file': 'supercell_file.txt',
+        'supercell_file': 'supercells.txt',
         'out_dir': "saved_networks/intermediate_networks",
         'ncore': 1,
         'mem_per_core': 16,
     },
     'merge_networks': {
         'supercell_dir': 'supercells',
-        'supercell_file': 'supercell_file.txt',
+        'supercell_file': 'supercells.txt',
         'intermediate_dir': 'saved_networks/intermediate_networks',
-        'consensus': [0.2, 0.5, 0.8], # must be list
+        'consensus': [0.5], # must be list
         'out_dir': 'saved_networks/final_networks',
         'ncore': 12,
         'mem_per_core': 4 

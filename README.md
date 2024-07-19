@@ -6,7 +6,7 @@ If you have not installed SCING, follow the installation instructions and conda 
 
 ```bash
 cd /path/to/SCING/repo
-git pull origin/main
+git pull origin
 ```
 
 
@@ -14,13 +14,7 @@ Then, clone this repository.
 
 ```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
-```
-
-Now, checkout a new local branch that tracks the scGRNdb.v1 branch.
-
-```bash
 cd scNetworkAtlas
-git checkout --track origin/scGRNdb.v1
 ```
 
 ## Creating Your Project Directory

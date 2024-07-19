@@ -16,6 +16,7 @@ Then, clone this repository.
 ```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 cd scNetworkAtlas
+git checkout --track origin/scGRNdb.v1
 ```
 
 ## Creating Your Project Directory

@@ -34,7 +34,7 @@ do
 			sleep 5m
 			exit
 		fi
-		Rscript --vanilla ./r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${q1} ${db} ${intermediate_dir} ${convertToHuman} ${num_cores}
+		Rscript --vanilla temp/r_files/PathwayEnrichmentAnnotation.r ${modules_dir} ${line} ${q1} ${db} ${intermediate_dir} ${convertToHuman} ${num_cores}
 		echo "sleeping"
 		sleep 5m
 		exit

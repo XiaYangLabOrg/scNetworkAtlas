@@ -1,22 +1,25 @@
 #!/bin/bash
-#$ -cwd -V -N RUNNETWORK -l h_data=16G,h_rt=23:00:00 -j y -o jobout/BUILDGRN.$JOB_ID
-. /u/local/Modules/default/init/modules.sh
+#$ -cwd -V -N RUNNETWORK -j y -o jobout/BUILDGRN.$JOB_ID
 
-# module load anaconda3
-# conda activate scing
+
 
 iteration=$SGE_TASK_ID
 supercell=$1
+supercell_dir=$2
+out_dir=$3
 
 echo "${supercell} ${iteration}"
-supercell_dir="supercells"
-file=saved_networks/intermediate_data/${supercell}/${supercell}.network.${iteration}.csv.gz
-if [ -f "$file" ]
+out_file=${out_dir}/${supercell}/${supercell}.network.${iteration}.csv.gz
+if [ -f "$out_file" ]
 then
 	sleep 10m
 	exit
 else 
-	python3 python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${iteration}
+	echo "BuildNetwork.py started on: " `date `
+	echo " "
+	python3 temp/python_files/BuildNetwork.py ${supercell_dir}/${supercell}.h5ad ${out_file} --seed ${iteration}
+	echo "Job $JOB_ID end on: " `date `
+	echo " "
 	sleep 5m
 	exit
 fi

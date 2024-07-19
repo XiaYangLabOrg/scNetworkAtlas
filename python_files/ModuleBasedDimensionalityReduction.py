@@ -30,7 +30,6 @@ def binary_search(l_idx, r_idx, target_Q1_size, precision, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None # function prints only if verbose=True
 
     while r_idx - l_idx >= 0.0001:
-
         resolution_parameter = (l_idx + r_idx) / 2
         
         partition = leidenalg.find_partition(G, leidenalg.CPMVertexPartition, resolution_parameter = resolution_parameter,seed=0)

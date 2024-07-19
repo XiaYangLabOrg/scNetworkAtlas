@@ -79,14 +79,14 @@ do
             num_rerun_supercells=$(cat ${param_subset_file} | wc -l)
             echo "Rerunning ${i} module size on ${num_rerun_supercells} celltypes"
             cat $param_subset_file
-            qsub -t 1:${num_rerun_supercells} -pe shared ${num_cores} shell_scripts/run_annotations.sh ${param_subset_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
+            qsub -t 1:${num_rerun_supercells} -pe shared ${num_cores} ../temp/shell_scripts/run_annotations.sh ${param_subset_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
             
         else
             echo "No need to rerun ${i} module size"
             
         fi  
     else
-        qsub -t 1:${num_supercells} -pe shared ${num_cores} shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
+        qsub -t 1:${num_supercells} -pe shared ${num_cores} ../temp/shell_scripts/run_annotations.sh ${supercell_dir}/${supercell_file} ${modules_dir} ${i} ${dbs} ${intermediate_dir} ${convertToHuman} ${num_cores}
     fi
     echo -e "\n"
 done

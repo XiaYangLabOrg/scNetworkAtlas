@@ -18,6 +18,6 @@ echo $num_supercells
 mkdir gene_memberships
 for i in "${q1_module_sizes[@]}"
 do
-	qsub -t 1:${num_supercells} shell_scripts/run_genemembership.sh ${supercell_dir} ${supercell_file} ${i}
+	qsub -t 1:${num_supercells} temp/shell_scripts/run_genemembership.sh ${supercell_dir} ${supercell_file} ${i}
 done
 

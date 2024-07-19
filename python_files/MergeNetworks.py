@@ -1,28 +1,39 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-if __name__ == "__main__":
+import os
+import warnings
+warnings.filterwarnings("ignore")
+import sys
+import pandas as pd
+import scanpy as sc
+from scing import merge
+import psutil
+import argparse
 
-# Set number of threads to use
-	import os
-	import warnings
-	warnings.filterwarnings("ignore")
-	import sys
-	sys.path.insert(1,'../../src/')
-	from supercellHelpers import *
-	from buildGRNHelpers import *
-	from MergeNetworksHelpers import *
-	import csv
+if __name__=='__main__':
+	parser = argparse.ArgumentParser(description="Merge Intermediate GRNs")
+	parser.add_argument('adata_file', type=str, help='path to pseudobulk h5ad file')
+	parser.add_argument('all_edge_files', type=str, help='directory to intermediate networks')
+	parser.add_argument('outfile', type=str, help='output filename')
+	parser.add_argument('-c','--consensus', type=float, help='consensus threshold', default=0.5)
 
-	import scanpy as sc
-# In[ ]:
+	args = parser.parse_args()
+	adata_file = args.adata_file
+	all_edge_files = args.all_edge_files
+	consensus = args.consensus
+	outfile = args.outfile
 
+	print(f"adata_file: {adata_file}\n\
+	all_edge_files: {all_edge_files}\n\
+	consensus: {consensus}\n\
+	outfile: {outfile}")
 
-	adata_merged = sc.read(sys.argv[1])
-	all_edge_files = sys.argv[2]
-
-#turn all edge files into one mega file
+	adata_merged = sc.read_h5ad(adata_file)
+	print(f"number of cpus: {psutil.cpu_count(logical=False)}")
+	outdir = '/'.join(outfile.split('/')[:-1])
+	os.makedirs(outdir, exist_ok=True)
+	# turn all edge files into one mega file
 	files = os.listdir(all_edge_files)
 	files = [f for f in files if ".csv.gz" in f]
 
@@ -30,29 +41,16 @@ if __name__ == "__main__":
 	for i in files:
 		all_edges.append(pd.read_csv(all_edge_files + i))
 
-
-# In[3]:
-
-
-	outfile = sys.argv[1].split("/")[-1].split(".h5ad")[0]
-#outfile
-
-
-# In[13]:
-
-
-	merger = NetworkMerger(adata_merged,
-                    all_edges,
-                       0.2,
-                    'saved_networks/final_edges',
-                    outfile,
-                    12,
-                    int(2e9),
-                    True)
-
-
-# In[14]:
-
+	remove_cycles = False
+	merger = merge.NetworkMerger(adata_merged,
+					all_edges,
+					consensus,
+					remove_cycles,
+					outdir=outdir,
+					prefix=str(outfile.split("/")[-1].split(".")[0]+str(consensus)),
+					ncore=psutil.cpu_count(),
+					mem_per_core="auto",
+					verbose=True)
 
 	merger.preprocess_network_files()
 	merger.remove_reversed_edges()
@@ -60,31 +58,7 @@ if __name__ == "__main__":
 	merger.get_triads()
 	merger.remove_redundant_edges()
 
-
-# In[15]:
-
-
 	all_edges = merger.edge_df.sort_values(by='importance',
-                          ascending=False)
+							ascending=False)
 
-
-# In[16]:
-
-
-	all_edges
-	all_edges.to_csv("saved_networks/final_edges/"+outfile+'.csv.gz')
-	#print(all_edges.source)
-	#print(all_edges.target)
-	#print(all_edges.importance)
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
+	all_edges.to_csv(outfile, index = False, sep='\t')

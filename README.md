@@ -1,87 +1,145 @@
-# SCING network building pipeline
+# SCING Pipeline
 
-## Installation
+## Installing the Pipeline
+
+If you have not installed SCING, follow the installation instructions and conda environment setup in the SCING repo [here](https://github.com/XiaYangLabOrg/SCING). Be sure that SCING version is up to date with the following.
+
+```bash
+cd /path/to/SCING/repo
+git pull origin/main
 ```
+
+
+Then, clone this repository.
+
+```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
+```
+
+Now, checkout a new local branch that tracks the scGRNdb.v1 branch.
+
+```bash
 cd scNetworkAtlas
-conda env create -n scing --file install/scing.environment.yml 
-conda activate scing
-pip install pyitlib  
+git checkout --track origin/scGRNdb.v1
 ```
 
-If you want to use the AUCell from SCENIC for graph based dimensionality reduction you must install pyscenic  
-```
-pip install pyscenic
-```
-If you want to perform pathway enrichment analysis with enrichr you must install R and enrichr OR use any R environment you have. Be sure that 'foreach' and 'doParallel' are installed in your R environment.
-```  
-conda env create -n enrichr --file install/pathway.environment.yml
-conda activate enrichr
-# install inside R
-R
-> install.packages('foreach')
-> install.packages('doParallel')
-> quit()
+## Creating Your Project Directory
+
+Create a directory for your project.
+
+```bash
+mkdir <your_project_name>
+cd <your_project_name>
 ```
 
-## Create a directory for each atlas
-From scNetworkAtlas directory, make human/mouse directory and the atlas directory inside that.
-```
-mkdir human_atlas
-mkdir human_atlas/Allen_10X
-cd human_atlas/Allen_10X
-cp -r /path/to/python/shell/submission/scripts ./
+Each project will be configured differently, so copy in a config and run_pipeline file for this project.
+
+```bash
+cp /path/to/scNetworkAtlas/config.py .
+cp /paty/to/scNetworkAtlas/run_pipeline.py .
 ```
 
-## Initial Directories
-- python_scripts
-- shell_scripts
-- submission_scripts: requires changing input files
-- ../../src: SCING scripts
+Note to those who have used previous versions of this repository:
 
-Run all submission scripts from the root directory /path/to/atlas/
+## Configuring Project Settings
 
+Fill out `config.py` with your project and development environment details.
 
-## 01. submit_run_cellmapping.sh
-inputs: 
-- base_dir: path to where all single cell database files are
-- mapping_file: path to where the cell type mapping file is for your atlas
-- adata_dir: path to where the adata file is for your atlas
-- celltype_column: name of the adata column containing the original cell type labels (explore h5ad file in jupyter notebook beforehand)
+- You may ignore (leave as is) config settings for steps you won't run
 
-```
-base_dir="/u/project/xyang123/shared/reference/single_cell_databases/"
-mapping_file="${base_dir}all_celltypes/human_Allen_10X.cleaned.tsv"
-adata_dir="${base_dir}human/Allen_10X/adatas/"
-celltype_column="celltypes"
-```
-After setting these inputs in the script, run it from the atlas directory with: <br>
-```
-bash submission_scripts/submit_run_cellmapping.sh
+## Running the SCING Pipeline
+
+To run any step, `<step>` of the SCING pipeline, run
+
+```bash
+python3 run_pipeline.py <step>
 ```
 
-## 02. submit_run_supercells.sh
-inputs:
-- filetype: gene expression matrix input file type ("npz" or "h5ad")
+where `<step>` must be one of 
 
-```
-bash submission_scripts/submit_run_supercells.sh
-```
+- [`setup`](#setup)
+- [`cell_mapping`](#cell_mapping)
+- [`pseudobulking`](#pseudobulking-supercells)
+- [`build_grn`](#build_grn)
+- [`merge_networks`](#merge-networks)
 
-## 03. submit_run_buildgrn.sh
-inputs:
-- num_networks: number of networks (set to 100 for official run, set to 2 for test run)
+*In progress*
 
-After setting this input in the script, run it from the atlas directory with: <br>
-```
-bash submission_scripts/submit_run_buildgrn.sh
-```
+- `gene_membership`
+- `annotations`
+- `process_annotations`
 
-## 04. submit_run_merge.sh
-No inputs required.
-```
-bash submission_scripts/submit_run_merge.sh
-```
+### Setup
+
+This step copies all submission, shell, and python scripts to your project directory.
+
+Inputs:
+
+- `main_branch_path`: path to scNetworkAtlas
+- `base_dir`: for cell atlas projects, this is the cell atlas data directory. For other projects, this is your project directory
+- `conda_init_script`: path to conda.sh, normally /path/to/miniconda3/etc/profile.d/conda.sh
+
+### Cell_mapping
+
+This step updates cell type labels in your single cell data. If you already have the cell type labels, you can skip this step.
+
+Inputs:
+
+- `base_dir`: same as setup `base_dir`
+- `mapping_file`: tab-separated file with columns for `Original Cell Type` and - - `Broader Cell Type`
+- `adata_dir`: path to adata directory
+- `celltype_column`: cell type column in the single cell object
+
+### Pseudobulking (Supercells)
+
+This step performs the cell pseudobulking using leiden clustering.
+
+Inputs:
+
+- `tissue_dir`: path to adata directory
+- `supercell_dir`: output pseudobuolk adata directory
+- `filetype`: file type for counts data (h5ad or npz)
+- `celltype_col`: cell type column in the single cell object
+- `tissue_celltype_file`: name of txt file to store all existing adata paths
+
+### Build_grn
+
+This step builds intermediate GRNs by bootstrapping the pseudobulk cells.
+
+Inputs:
+
+- `num_networks`: number of intermediate networks
+- `supercell_dir`: pseudobulk adata directory
+- `supercell_file`: name of txt file to store all existing supercell file paths
+- `out_dir`: output directory
+- `ncore`: number of cores used to build each network (default is 1)
+- `mem_per_core`: memory per core in GB (default is 16)
+
+### Merge Networks
+
+This step merges intermediate GRNs.
+
+Inputs:
+
+- `supercell_dir`: pseudobulk adata directory
+- `supercell_file`: name of txt file to store all existing supercell file paths
+- `intermediate_dir`: directory to intermediate networks
+- `consensus`: list of consensus thresholds to test (default is [0.5])
+- `out_dir`: output directory
+- `ncore`: number of cores used to build each network (default is 12)
+- `mem_per_core`: memory per core in GB (default is 4)
+
+### Gene_membership (In Progress)
+
+This step performs module detection in the final network.
+
+
+### Pathway Enrichment (In Progress)
+
+This step performs pathway enrichment on modules
+
+<!-- 
+## Updates in Progress
 
 ## 05. submit_run_genemembership.sh
 inputs:
@@ -118,4 +176,4 @@ inputs:
 - final_dir: directory where files of annotations of all modules within each resolution will be stored
 ```
 bash submission_scripts/submit_run_processannotations.sh
-```
+``` -->

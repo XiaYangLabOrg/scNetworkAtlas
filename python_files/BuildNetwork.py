@@ -55,7 +55,6 @@ if __name__=='__main__':
     scing.build_grn()
 
     scing.edges.to_csv(outfile, index = False)
- 
 
 
 

@@ -17,8 +17,8 @@ do
 			sleep 10m
 			exit
 		else
-			#python3 ../python_files/BuildSupercells.py ${line}${filetype} ${supercell_dir} --stratify_by $celltype_col
-			python3 temp/python_files/BuildSupercells.py ${line}${filetype} ${supercell_dir}
+			python3 temp/python_files/BuildSupercells.py ${line}${filetype} ${supercell_dir} --stratify_by $celltype_col
+			# python3 temp/python_files/BuildSupercells.py ${line}${filetype} ${supercell_dir}
 			echo "sleeping"
 			sleep 5m 
 			exit

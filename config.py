@@ -2,7 +2,7 @@
 # -----------------------------------
 
 # Configuration settings (these settings are read into submission scripts)
-main_branch_path = "/u/home/s/skikuchi/project-xyang123/scNetworkAtlas/"
+main_branch_path = "/u/scratch/m/mikechen/scNetworkAtlas/"
 #cloned scGRNdb repo
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 
@@ -22,7 +22,7 @@ scing_config = {
     'pseudobulking': {
         'tissue_dir': "tissue_adata",
         'supercell_dir': "supercells",
-        'filetype': "npz", # npz or h5ad
+        'filetype': "h5ad", # npz or h5ad
         'celltype_col': "celltypes",
         'tissue_celltype_file': 'tissue_celltype_file.txt',
     },
@@ -37,23 +37,22 @@ scing_config = {
     'build_grn': {
         'num_networks': 100,
         'supercell_dir': 'supercells',
-        'supercell_file': 'supercell_file.txt',
-        'out_dir': "intermediate_networks",
+        'supercell_file': 'supercells.txt',
+        'out_dir': "saved_networks/intermediate_networks",
         'ncore': 1,
-        'mem_per_core': 60,
+        'mem_per_core': 16,
     },
     'merge_networks': {
         'supercell_dir': 'supercells',
         'supercell_file': 'supercell_file.txt',
-        'intermediate_dir': 'intermediate_networks',
-        #'config': None # no inputs needed for merge networks step
-        'consensus': [0.2, 0.5, 0.8],
-        'out_dir': 'final_networks',
+        'intermediate_dir': "saved_networks/intermediate_networks",
+        'consensus': [0.5],
+        'out_dir': 'saved_networks/final_networks',
         'ncore': 12,
         'mem_per_core': 4 
     },
     'gene_membership': {
-        'network_dir': 'final_networks',
+        'network_dir': 'saved_networks/final_networks',
         'network_file': 'final_networks.txt',
         #'q1_module_sizes': ('20' '35' '50')
         'out_dir': 'gene_memberships',

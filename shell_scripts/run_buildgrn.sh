@@ -7,8 +7,6 @@ iteration=$SGE_TASK_ID
 supercell=$1
 supercell_dir=$2
 out_dir=$3
-ncore=$4
-mem_per_core=$5
 
 echo "${supercell} ${iteration}"
 out_file=${out_dir}/${supercell}/${supercell}.network.${iteration}.csv.gz

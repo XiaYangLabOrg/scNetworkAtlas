@@ -2,22 +2,22 @@
 
 # Run from root directory /path/to/atlas/
 ##### INPUTS #####
-q1_module_sizes=('20' '35' '50')
-supercell_dir="supercells"
-supercell_file="supercells.txt"
+network_dir=$1
+network_file=$2
+out_dir=$3
+min_module_size=$4
+max_module_size=$5
 ##################
 
-cd $supercell_dir
-if [ ! -f ${supercell_file} ]
+cd $network_dir
+if [ ! -f ${network_file} ]
 then
-    find ./ | grep h5ad | awk -F'.h5ad' '{print $1}' > ${supercell_file}
+    find ./ | grep csv.gz | awk -F'.csv.gz' '{print $1}' > ${network_file}
 fi
 cd ../
-num_supercells=$(cat ${supercell_dir}/${supercell_file} | wc -l)
-echo $num_supercells
-mkdir gene_memberships
-for i in "${q1_module_sizes[@]}"
-do
-	qsub -t 1:${num_supercells} temp/shell_scripts/run_genemembership.sh ${supercell_dir} ${supercell_file} ${i}
-done
+num_networks=$(cat ${network_dir}/${network_file} | wc -l)
+echo $num_networks
+mkdir $out_dir
+
+qsub -t 1:${num_networks} temp/shell_scripts/run_genemembership.sh ${network_dir} ${network_file} ${out_dir} ${min_module_size} ${max_module_size}
 

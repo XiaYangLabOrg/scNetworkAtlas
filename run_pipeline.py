@@ -8,7 +8,7 @@
 
 ### END OF HOW TO USE ###
 
-USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations|clean>"
+USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|enrichment|annotations|process_annotations|clean>"
 
 import os
 import sys
@@ -152,7 +152,18 @@ def merge_networks():
 
 def gene_membership():
     confirm_conda_activated()
+    
+    config = scing_config['gene_membership']
+    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} "
+    os.system(cmd)
+    pass
 
+def enrichment():
+    confirm_conda_activated()
+    
+    config = scing_config['enrichment']
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['modules_dir']} {config['module_file']} {config['out_dir']} {config['pathway']} {config['pathway_size_min']} {config['pathway_size_max']} {config['pathway_col']} {config['module_col']} "
+    os.system(cmd)
     pass
 
 def annotations():
@@ -206,6 +217,8 @@ if __name__ == "__main__":
         merge_networks()
     elif step == "gene_membership":
         gene_membership()
+    elif step == "enrichment":
+        enrichment()
     elif step == "annotations":
         annotations()
     elif step == "process_annotations":

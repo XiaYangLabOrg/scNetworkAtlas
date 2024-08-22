@@ -16,6 +16,7 @@ Then, clone this repository.
 ```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 cd scNetworkAtlas
+# Run only if you want to use the development version of the pipeline
 git checkout --track origin/scGRNdb.v1
 ```
 

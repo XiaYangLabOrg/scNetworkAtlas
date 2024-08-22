@@ -1,30 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import leidenalg        # Version 0.8.4
-import igraph as ig
 import numpy as np
 import pandas as pd
-from collections import Counter
-import scanpy as sc
-#import matplotlib.pyplot as plt
-
-#import seaborn as sns
-from ctxcore.genesig import GeneSignature 
-# UNCOMMENT BELOW AND COMMENT OUT ABOVE IF USING AN OLDER VERSION OF PYSCENIC
-#from pyscenic.genesig import GeneSignature
-from pyscenic.aucell import aucell, derive_auc_threshold, create_rankings
-from sklearn.decomposition import PCA
-
 import sys
+import networkx as nx
+import leidenalg
+import igraph as ig
+import scanpy as sc
+import argparse
 
 
+
+
+### module-> module
 
 def remove_small_modules(gene_membership, min_module_size):
     min_module_size
-    group_count = gene_membership.cluster_membership.value_counts()
+    group_count = gene_membership.module.value_counts()
     groups_to_keep = group_count[group_count > min_module_size].index
-    return gene_membership[gene_membership.cluster_membership.isin(groups_to_keep)]
+    return gene_membership[gene_membership.module.isin(groups_to_keep)]
 
 def binary_search(l_idx, r_idx, target_Q1_size, precision, verbose=False):
     verboseprint = print if verbose else lambda *a, **k: None # function prints only if verbose=True
@@ -37,7 +32,7 @@ def binary_search(l_idx, r_idx, target_Q1_size, precision, verbose=False):
         
         # organizing gene membership dataframe
         genes = G.vs['name']
-        gene_membership = pd.DataFrame(np.array([genes,groups]).T, columns = ['genes','cluster_membership'])
+        gene_membership = pd.DataFrame(np.array([genes,groups]).T, columns = ['genes','module'])
         gene_membership = gene_membership.sort_values('genes')
 
         # remove small modules with 10 or fewer genes
@@ -52,7 +47,7 @@ def binary_search(l_idx, r_idx, target_Q1_size, precision, verbose=False):
         
         # record the size of each module
         verboseprint('Checking 25th percentile module size')
-        module_sizes = gene_membership['cluster_membership'].value_counts().reset_index(name='size')
+        module_sizes = gene_membership['module'].value_counts().reset_index(name='size')
         module_sizes.columns = ['Module','Module_Size']
         
         q1 = module_sizes['Module_Size'].quantile(0.25)
@@ -76,32 +71,89 @@ def binary_search(l_idx, r_idx, target_Q1_size, precision, verbose=False):
     else:
         return resolution_parameter, None
 
+def compute_modularity(G_nx, r):
+    community = nx.community.louvain_communities(G_nx, resolution=r)
+    return nx.community.modularity(G_nx, community, resolution=r), community
+
+# function for gene membership
+def GeneMemByMod(G, threshold = 10, maxsize_threshold=300):
+    best, count = 0, 0
+    best_r = 0
+    mod_li = []
+    n_li = []
+    best_community = None
+    # optimization
+    i = 0
+    for r in np.arange(0.001,0.02,0.001): # add range choice - or 
+        _community = leidenalg.find_partition(G, leidenalg.CPMVertexPartition, resolution_parameter = r,seed=0)
+        modularity = ig.Graph.modularity(G, _community) # modify later, resolution parameters seems not a good parameter to optimize
+        mod_li.append(modularity)
+        n_li.append(len(_community))
+        gene_membership, module = [],[]
+        count = 0
+        for community in _community:
+            if len(community) < threshold:
+                continue
+            else:
+                for gene in community:
+                    gene_membership.append(gene)
+                    module.append(count)
+                count += 1
+        gene_membership = pd.DataFrame([gene_membership, module]).T
+        gene_membership.columns = ['genes','module']
+        
+        module_size = gene_membership.module.value_counts().reset_index()
+        module_size.columns = ['module','size']
+        if module_size['size'].max() > maxsize_threshold:
+            continue
+        if best < modularity:
+            best_r = r
+            best = modularity
+            best_community = _community
+            count = 0
+    print(f"best resolution: {best_r} \t| best modularity: {best}")
+    
+    count = 0
+    gene_membership, module = [],[]
+    for community in best_community:
+        if len(community) < threshold:
+            continue
+        else:
+            for gene in community:
+                gene = G.vs[gene]['name']
+                gene_membership.append(gene)
+                module.append(count)
+            count += 1
+    gene_membership = pd.DataFrame([gene_membership, module]).T
+    gene_membership.columns = ['genes','module']
+    return gene_membership
 
 
 if __name__ == '__main__':
-    network = pd.read_csv(sys.argv[1], index_col=0)
-    outfile = sys.argv[2]
-    q1 = int(sys.argv[3])
-    # Q1s = sys.argv[3]
-
-    # network = pd.read_csv('../saved_networks/final_edges/Bladder_bladder_cell.csv.gz',index_col=0)
-    # outfile = './gene_memberships/Bladder_bladder_cell.gene_membership.20.csv.gz'
-    # q1 = 20
-    # create and partition graph
+    parser = argparse.ArgumentParser(description="Module Detection")
+    parser.add_argument('input', type=str, help='path to network file')
+    parser.add_argument('output', type=str, help='output filename')
+    parser.add_argument('min_module_size', type=int, default = 10, help='threshold fot minimum module size')
+    parser.add_argument('max_module_size', type=int, default = 300, help='threshold fot maximum module size')
+    
+    args = parser.parse_args()
+    input = args.input
+    output = args.output
+    min_module_size = args.min_module_size
+    max_module_size = args.max_module_size
+    
+    network = pd.read_csv(input)#index_col=0)
+    #G_nx = nx.DiGraph(G.get_edgelist())
+    #G_nx = nx.DiGraph(network)
     G = ig.Graph.TupleList([tuple(x) for x in network.values], directed = True)
-
-    precision = 2
-    max_res=1
-    min_res=0.00001
-
-    while True:
-        resolution_parameter, gene_membership = binary_search(min_res, max_res, q1, precision, verbose=False)
-        if type(gene_membership) == pd.DataFrame:
-            print(q1,resolution_parameter)
-            print('module size stats: ')
-            print(gene_membership.cluster_membership.value_counts().describe())
-            gene_membership.to_csv(outfile, index=False)
-            break
-        else:
-            print("Binary Search failed at " + str(resolution_parameter) + ". Increase search space")
-            max_res+=1
+    
+    gene_membership = GeneMemByMod(G, threshold=min_module_size, maxsize_threshold=max_module_size)
+    
+    print('module size stats: ')
+    print(gene_membership.module.value_counts().describe())
+    
+    if output.endswith('.csv'):
+        gene_membership.to_csv(output, index=False)
+    else:
+        gene_membership.to_csv(output, index=False, sep='\t')
+    

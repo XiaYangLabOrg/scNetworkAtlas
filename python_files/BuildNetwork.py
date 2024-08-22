@@ -29,10 +29,14 @@ if __name__=='__main__':
 
     adata = sc.read_h5ad(adata_file)
 
-    ########################################GENES FILTER##############################
+        
     # sc.pp.filter_genes(adata_saved, min_cells = (0.1*adata_saved.shape[0]), inplace=True, copy=False)
     outdir = '/'.join(outfile.split('/')[:-1])
     os.makedirs(outdir, exist_ok=True)
+    
+    total_memory = psutil.virtual_memory().total
+    ncore = psutil.cpu_count()
+    mem_per_core = total_memory // ncore
 
     scing = build.grnBuilder(adata=adata, 
                             ngenes=-1, 
@@ -41,8 +45,8 @@ if __name__=='__main__':
                             subsample_perc=0.7,
                             prefix=outfile.split("/")[-1],
                             outdir=outdir,
-                            ncore=psutil.cpu_count(),
-                            mem_per_core='auto',
+                            ncore=ncore,
+                            mem_per_core=mem_per_core,
                             verbose=True,
                             random_state=seed)
     scing.subsample_cells()

@@ -8,17 +8,19 @@
 
 ### END OF HOW TO USE ###
 
-USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|annotations|process_annotations|clean>"
+USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|enrichment|annotations|process_annotations|clean>"
+env_activated = False
 
 import os
 import sys
+import argparse
 
 # Fetch config from current dir
 from config import base_dir, scing_config
 
 def activate_conda_environment(conda_env):
     try:
-        combined_command = f"source {scing_config['conda_init_script']} && conda activate {conda_env}"
+        combined_command = f"conda activate {conda_env}"
         print(f"\nATTENTION: PLEASE RUN \n`{combined_command}`\n to activate conda environment {conda_env}")
     except Exception as e:
         print(f"Error: {e}")
@@ -103,16 +105,21 @@ def setup():
     print("done copying scripts")
     
 def confirm_conda_activated():
-    confirmation = input("Is your scing conda environment activated? (y/n): ").lower()
-    if confirmation == 'y':
-        return True
-    elif confirmation == 'n':
-        print("Please activate your conda environment and run the script again.")
-        activate_conda_environment('scing')
-        sys.exit()
+    if not env_activated:
+        confirmation = input("Is your scing conda environment activated? (y/n): ").lower()
+        if confirmation == 'y':
+            return True
+        elif confirmation == 'n':
+            print("Please activate your conda environment and run the script again.")
+            activate_conda_environment('scing')
+            sys.exit()
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
+            return False
     else:
-        print("Invalid input. Please enter 'y' or 'n'.")
-        return False
+        print('scing environment is activated')
+        return True
+
 
 def cell_mapping():
     confirm_conda_activated()
@@ -152,7 +159,18 @@ def merge_networks():
 
 def gene_membership():
     confirm_conda_activated()
+    
+    config = scing_config['gene_membership']
+    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} "
+    os.system(cmd)
+    pass
 
+def enrichment():
+    confirm_conda_activated()
+    
+    config = scing_config['enrichment']
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['modules_dir']} {config['module_file']} {config['out_dir']} {config['pathway']} {config['pathway_size_min']} {config['pathway_size_max']} {config['pathway_col']} {config['module_col']} "
+    os.system(cmd)
     pass
 
 def annotations():
@@ -186,12 +204,15 @@ def clean():
     #     print("Invalid input. Please retry.")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    parser = argparse.ArgumentParser(description="Running SCING Pipeline")
+    parser.add_argument("step", type=str, help="step to run")
+    parser.add_argument("-y", "--env_activated",  "--y", dest="env_activated", action='store_true', help="indicates conda environment is activated, skips environment check", default=False)
+    args = parser.parse_args()
+    if len(sys.argv) < 2:
         print(USAGE)
         sys.exit(1)
-    
-    step = sys.argv[1]
-
+    step = args.step
+    env_activated = args.env_activated
     if step == "setup":
         setup()
     elif step == "cell_mapping":
@@ -206,6 +227,8 @@ if __name__ == "__main__":
         merge_networks()
     elif step == "gene_membership":
         gene_membership()
+    elif step == "enrichment":
+        enrichment()
     elif step == "annotations":
         annotations()
     elif step == "process_annotations":

@@ -32,7 +32,7 @@ Each project will be configured differently, so copy in a config and run_pipelin
 
 ```bash
 cp /path/to/scNetworkAtlas/config.py .
-cp /paty/to/scNetworkAtlas/run_pipeline.py .
+cp /path/to/scNetworkAtlas/run_pipeline.py .
 ```
 
 Note to those who have used previous versions of this repository:

@@ -7,7 +7,6 @@ main_branch_path = "/u/scratch/m/mikechen/scNetworkAtlas/"
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 
 scing_config = {
-    'conda_init_script': '~/project-xyang123/miniconda3/etc/profile.d/conda.sh',
     'copy_cmds': 
             [f"cp -r {main_branch_path}shell_scripts/* temp/shell_scripts/",
              f"cp -r {main_branch_path}submission_scripts/* temp/submission_scripts/",

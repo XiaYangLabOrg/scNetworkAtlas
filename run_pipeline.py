@@ -161,7 +161,7 @@ def gene_membership():
     confirm_conda_activated()
     
     config = scing_config['gene_membership']
-    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} "
+    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} {config['network_ext']}"
     os.system(cmd)
     pass
 

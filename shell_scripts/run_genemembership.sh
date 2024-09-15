@@ -11,6 +11,7 @@ network_file=$2
 out_dir=$3
 min_module_size=$4
 max_module_size=$5
+network_ext=$6
 
 counter=1
 while read line;
@@ -18,12 +19,12 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		outfile=./${out_dir}/${line}.gene_membership.txt
+		outfile=./${out_dir}/${line}gene_membership.txt
 		if [ -f "$outfile" ]; then
 			sleep 5m
 			exit
 		else
-			python3 temp/python_files/ModuleBasedDimensionalityReduction.py ./${network_dir}/${line}.csv.gz $outfile $min_module_size $max_module_size
+			python3 temp/python_files/ModuleBasedDimensionalityReduction.py ${network_dir}/${line}${network_ext} $outfile $min_module_size $max_module_size
 			echo "sleeping"
 			sleep 5m
 			exit

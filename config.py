@@ -53,7 +53,7 @@ scing_config = {
     'gene_membership': {
         'network_dir': 'saved_networks/final_networks',
         'network_file': 'final_networks.txt',
-        #'q1_module_sizes': ('20' '35' '50')
+        'network_ext': 'csv.gz',
         'out_dir': 'gene_memberships',
         "min_module_size": 10,
         "max_module_size": 300,

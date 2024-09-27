@@ -143,9 +143,9 @@ if __name__ == '__main__':
     min_module_size = args.min_module_size
     max_module_size = args.max_module_size
     
-    if 'txt' in os.path.splitext(input)[1]:
+    if input.endswith('txt'):
         network = pd.read_csv(input, sep='\t')
-    elif 'csv' in os.path.splitext(input)[1]:
+    elif input.endswith('csv') or input.endswith('csv.gz'):
         network = pd.read_csv(input)
     else:
         print('File must be txt or csv')

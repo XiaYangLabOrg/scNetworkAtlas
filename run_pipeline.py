@@ -8,7 +8,7 @@
 
 ### END OF HOW TO USE ###
 
-USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|enrichment|annotations|process_annotations|clean>"
+USAGE = "python run_pipeline.py <setup|cell_mapping|pseudobulking_v2|pseudobulking|build_grn|merge_networks|gene_membership|enrichment|enrichment_decoupler|clean>"
 env_activated = False
 
 import os
@@ -104,20 +104,20 @@ def setup():
         os.system(cmd)
     print("done copying scripts")
     
-def confirm_conda_activated():
+def confirm_conda_activated(conda_env='scing'):
     if not env_activated:
-        confirmation = input("Is your scing conda environment activated? (y/n): ").lower()
+        confirmation = input(f"Is your scing {conda_env} environment activated? (y/n): ").lower()
         if confirmation == 'y':
             return True
         elif confirmation == 'n':
             print("Please activate your conda environment and run the script again.")
-            activate_conda_environment('scing')
+            activate_conda_environment(conda_env)
             sys.exit()
         else:
             print("Invalid input. Please enter 'y' or 'n'.")
             return False
     else:
-        print('scing environment is activated')
+        print(f'{conda_env} environment is activated')
         return True
 
 
@@ -161,27 +161,23 @@ def gene_membership():
     confirm_conda_activated()
     
     config = scing_config['gene_membership']
-    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} {config['network_ext']}"
+    cmd = f"bash temp/submission_scripts/submit_run_genemembership.sh {config['network_dir']} {config['network_file']} {config['out_dir']} {config['min_module_size']} {config['max_module_size']} {config['network_ext']} {config['submit_command']}"
     os.system(cmd)
-    pass
 
 def enrichment():
-    confirm_conda_activated()
+    confirm_conda_activated(conda_env='decoupler')
     
     config = scing_config['enrichment']
-    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['modules_dir']} {config['module_file']} {config['out_dir']} {config['pathway']} {config['pathway_size_min']} {config['pathway_size_max']} {config['pathway_col']} {config['module_col']} "
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {config['pathway_file']} {config['pathway_db']} {config['pathway_name_col']} {config['pathway_gene_col']} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']}"
     os.system(cmd)
-    pass
 
-def annotations():
-    confirm_conda_activated()
+def enrichment_decoupler():
+    confirm_conda_activated(conda_env='decoupler')
+    
+    config = scing_config['enrichment_decoupler']
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment_decoupler.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {config['pathway']} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']}"
+    os.system(cmd)
 
-    pass
-
-def process_annotations():
-    confirm_conda_activated()
-
-    pass
 
 def clean():
     pass
@@ -229,10 +225,8 @@ if __name__ == "__main__":
         gene_membership()
     elif step == "enrichment":
         enrichment()
-    elif step == "annotations":
-        annotations()
-    elif step == "process_annotations":
-        process_annotations()
+    elif step == "enrichment_decoupler":
+        enrichment_decoupler()
     elif step == "clean":
         clean()
     else:

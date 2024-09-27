@@ -24,7 +24,11 @@ do
 			sleep 5m
 			exit
 		else
+			echo "Job $JOB_ID ModuleBasedDimensionalityReduction.py started on: " `date `
+			echo " "
 			python3 temp/python_files/ModuleBasedDimensionalityReduction.py ${network_dir}/${line}${network_ext} $outfile $min_module_size $max_module_size
+			echo "Job $JOB_ID ModuleBasedDimensionalityReduction.py ended on: " `date `
+			echo " "
 			echo "sleeping"
 			sleep 5m
 			exit

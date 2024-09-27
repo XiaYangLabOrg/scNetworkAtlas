@@ -57,35 +57,40 @@ scing_config = {
         'out_dir': 'gene_memberships',
         "min_module_size": 10,
         "max_module_size": 300,
+        "submit_command": "qsub", # qsub or bash
         
     },
     'enrichment':{
-        'modules_dir': 'gene_memberships',
-        'module_file': 'gene_memberships.txt',
-        'out_dir': 'enrichment',
-        "pathway": "go_biological_process",
+        'module_dir': 'gene_memberships',
+        'module_file': 'gene_membership_files',
+        'module_name_col': 'module',
+        'module_gene_col': 'genes',
+        'pathway_file': '/u/project/xyang123/shared/reference/pathways/human/GO_BP_Hs.txt',
+        'pathway_db': 'GO_BP',
+        'pathway_name_col': 'MODULE',
+        'pathway_gene_col': 'GENE',
+        'min_overlap': 5,
         "pathway_size_min": 10,
         "pathway_size_max": 500,
-        "pathway_col": "pathway",
-        "module_col": "module",
+        'out_dir': 'enrichment'
+
+
+    },
+    'enrichment_decoupler':{
+        'module_dir': 'gene_memberships',
+        'module_file': 'gene_membership_files',
+        'module_name_col': 'module',
+        'module_gene_col': 'genes',
+        "pathway": "go_biological_process",
+        'min_overlap': 5,
+        "pathway_size_min": 10,
+        "pathway_size_max": 500,
+        'out_dir': 'enrichment_decoupler'
         # choice:
         # chemical_and_genetic_perturbations immunesigdb mirna_targets_mirdb go_molecular_function tf_targets_gtrf tf_targets_legacy oncogenic_signatures cell_type_signatures vaccine_response go_biological_process cancer_gene_neighborhoods 
         # cancer_modules go_cellular_component wikipathways reactome_pathways hallmark mirna_targets_legacy biocarta_pathways positional human_phenotype_ontology pid_pathways kegg_pathways
     },
-    'annotations': {
-        'rerun': "False",
-        'mode': "test", # test or default
-        'dbs': "/u/scratch/m/mikechen/pathway_databases/genesets/human_toy", # human or mouse
-        'num_cores': 12,
-        'q1_module_sizes': ('20' '35' '50'), # should match gene_membership config
-        'modules_dir': 'gene_memberships/',
-        'intermediate_dir': './pathway_annotations/intermediate_annotations'
-    },
-    'process_annotations': {
-        'mode': 'test', # test or default
-        'intermediate_dir': './pathway_annotations/intermediate_annotations',
-        'final_dir': './pathway_annotations/final_annotations'
-    },
+    
 }
     
 # -----------------------------------

@@ -11,7 +11,7 @@ import argparse
 parser = argparse.ArgumentParser(description="enrichment")
 parser.add_argument('module_file', type=str, help='path to module file')
 parser.add_argument('--module_name_col', type=str, default='module', help='module column name in module file')
-parser.add_argument('--module_gene_col', type=str, default='genes', help='module column name in module file')
+parser.add_argument('--module_gene_col', type=str, default='genes', help='gene column name in module file')
 # parser.add_argument('--mod_delim', type=str, default="\t", help="delimiter for module file. Default \"\\t\"")
 parser.add_argument('--out_file', type=str, help='output file')
 # if using msigdb pathways through decoupler api

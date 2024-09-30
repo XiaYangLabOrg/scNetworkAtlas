@@ -9,6 +9,7 @@ import leidenalg
 import igraph as ig
 import scanpy as sc
 import argparse
+import os
 
 
 
@@ -142,7 +143,13 @@ if __name__ == '__main__':
     min_module_size = args.min_module_size
     max_module_size = args.max_module_size
     
-    network = pd.read_csv(input)#index_col=0)
+    if input.endswith('txt'):
+        network = pd.read_csv(input, sep='\t')
+    elif input.endswith('csv') or input.endswith('csv.gz'):
+        network = pd.read_csv(input)
+    else:
+        print('File must be txt or csv')
+        exit()
     #G_nx = nx.DiGraph(G.get_edgelist())
     #G_nx = nx.DiGraph(network)
     G = ig.Graph.TupleList([tuple(x) for x in network.values], directed = True)

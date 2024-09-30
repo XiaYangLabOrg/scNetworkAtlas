@@ -11,17 +11,6 @@ tissue_celltype_file=$5
 
 echo $filetype
 
-if [[ "${filetype}" == "npz" ]];
-then
-    find ./ | grep genes | awk -F'_genes.txt' '{print $1}' > ${tissue_celltype_file}
-elif [[ "${filetype}" == "h5ad" ]]
-then
-    find ./ | grep h5ad | awk -F'.h5ad' '{print $1}' > ${tissue_celltype_file}
-else
-    echo "filetype must be either npz or h5ad"
-    exit
-fi
-
 if [[ ! -f ${tissue_dir}/${tissue_celltype_file} ]];
 then
     find $tissue_dir | grep ${filetype} | awk -F ${filetype} '{print $1}' | sort > ${tissue_dir}/${tissue_celltype_file}

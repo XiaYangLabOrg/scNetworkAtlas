@@ -10,15 +10,12 @@ module_dir=$1
 module_file=$2
 module_name_col=$3
 module_gene_col=$4
-pathway_file=$5
-pathway_db=$6
-pathway_name_col=$7
-pathway_gene_col=$8
-min_overlap=$9
-pathway_size_min=${10}
-pathway_size_max=${11}
+pathway=$5
+min_overlap=$6
+pathway_size_min=$7
+pathway_size_max=$8
 n_background_genes=20000
-out_dir=${12}
+out_dir=$9
 
 counter=1
 while read line;
@@ -26,7 +23,7 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		outfile=./${out_dir}/${line}.${pathway_db}.enrichment.txt
+		outfile=./${out_dir}/${line}.${pathway}.enrichment.txt
 		if [ -f "$outfile" ]; then
 			sleep 5m
 			exit
@@ -37,15 +34,13 @@ do
 				./${module_dir}/${line}.txt \
 				--module_name_col $module_name_col \
 				--module_gene_col $module_gene_col \
-				--pathway_file ${pathway_file} \
-				--pathway_name_col $pathway_name_col \
-				--pathway_gene_col $pathway_gene_col \
+				--use_msigdb \
+				--pathway $pathway \
 				--min_overlap $min_overlap \
 				--pathway_size_min ${pathway_size_min} \
 				--pathway_size_max ${pathway_size_max} \
 				--n_background_genes $n_background_genes \
 				--out_file ${outfile}
-			
 			echo "Job $JOB_ID enrichment.py ended on: " `date `
 			echo " "
 			echo "sleeping"

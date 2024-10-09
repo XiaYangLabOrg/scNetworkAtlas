@@ -17,7 +17,7 @@ import os
 ### module-> module
 
 def remove_small_modules(gene_membership, min_module_size):
-    min_module_size
+    # min_module_size
     group_count = gene_membership.module.value_counts()
     groups_to_keep = group_count[group_count > min_module_size].index
     return gene_membership[gene_membership.module.isin(groups_to_keep)]
@@ -76,57 +76,90 @@ def compute_modularity(G_nx, r):
     community = nx.community.louvain_communities(G_nx, resolution=r)
     return nx.community.modularity(G_nx, community, resolution=r), community
 
+def GeneMemByMod_optimizer(G, min_module_size, max_module_size, partition_type=leidenalg.CPMVertexPartition, resolution_range=(0,0.01), return_stats=False):
+    optimiser = leidenalg.Optimiser()
+    optimiser.set_rng_seed(0)
+    # run partitioning across range of resolutions defined by optimizer
+    profile = optimiser.resolution_profile(G, partition_type=partition_type,
+                                        resolution_range=resolution_range)
+    # summarize results
+    if return_stats:
+        partition_stats = pd.DataFrame(columns=['res','modularity', 'total_modules', 'total_genes','remaining_modules','remaining_genes', 'max_module_size'])
+    
+    # identify resolution with highest modularity and with modules smaller than max module size.
+    best_partition = profile[0]
+    for p in profile:
+        res = p.resolution_parameter
+        max_size = max(p.sizes())
+        modularity = p.modularity
+        # add to summary results
+        if return_stats:
+            total_modules = len(p.sizes())
+            total_genes = p.n
+            mod_sizes = np.array(p.sizes())
+            remaining_modules = mod_sizes[((mod_sizes >= min_module_size) & (mod_sizes<=max_module_size))]
+            remaining_modules_num = remaining_modules.shape[0]
+            remaining_genes = remaining_modules.sum()
+            partition_stats.loc[partition_stats.shape[0]] = [res, modularity, total_modules, total_genes, remaining_modules_num, remaining_genes, max_size]
+        # update best partition
+        if max_size <= max_module_size and modularity > best_partition.modularity:
+            best_partition = p
+    
+    # get gene membership of best partition
+    groups = np.array(best_partition.membership)
+    genes = G.vs['name']
+    gene_membership = pd.DataFrame(np.array([genes,groups]).T, columns = ['genes','module'])
+    gene_membership = remove_small_modules(gene_membership, min_module_size=min_module_size)
+    print(f"best resolution: {best_partition.resolution_parameter} \t| best modularity: {best_partition.modularity}")
+    if return_stats:
+        return (gene_membership, partition_stats, best_partition.resolution_parameter)
+    else:
+        return gene_membership
+
 # function for gene membership
-def GeneMemByMod(G, threshold = 10, maxsize_threshold=300):
+def GeneMemByMod_cpm(G, threshold = 10, maxsize_threshold=300, resolutions=list(np.arange(0.001,0.02,0.001))):
     best, count = 0, 0
     best_r = 0
-    mod_li = []
-    n_li = []
+    # mod_li = []
+    # n_li = []
     best_community = None
     # optimization
-    i = 0
-    for r in np.arange(0.001,0.02,0.001): # add range choice - or 
+    for r in resolutions: # add range choice - or 
         _community = leidenalg.find_partition(G, leidenalg.CPMVertexPartition, resolution_parameter = r,seed=0)
-        modularity = ig.Graph.modularity(G, _community) # modify later, resolution parameters seems not a good parameter to optimize
-        mod_li.append(modularity)
-        n_li.append(len(_community))
-        gene_membership, module = [],[]
-        count = 0
-        for community in _community:
-            if len(community) < threshold:
-                continue
-            else:
-                for gene in community:
-                    gene_membership.append(gene)
-                    module.append(count)
-                count += 1
-        gene_membership = pd.DataFrame([gene_membership, module]).T
-        gene_membership.columns = ['genes','module']
+        modularity = _community.modularity # modify later, resolution parameters seems not a good parameter to optimize
+        # mod_li.append(modularity)
+        # n_li.append(len(_community))
+        # gene_membership, module = [],[]
+        # count = 0
+        # for community in _community:
+        #     if len(community) < threshold:
+        #         continue
+        #     else:
+        #         for gene in community:
+        #             gene_membership.append(gene)
+        #             module.append(count)
+        #         count += 1
+        # gene_membership = pd.DataFrame([gene_membership, module]).T
+        # gene_membership.columns = ['genes','module']
         
-        module_size = gene_membership.module.value_counts().reset_index()
-        module_size.columns = ['module','size']
-        if module_size['size'].max() > maxsize_threshold:
+        # module_size = gene_membership.module.value_counts().reset_index()
+        # module_size.columns = ['module','size']
+        if max(_community.sizes()) > maxsize_threshold:
             continue
         if best < modularity:
             best_r = r
             best = modularity
             best_community = _community
-            count = 0
+            # count = 0
     print(f"best resolution: {best_r} \t| best modularity: {best}")
     
-    count = 0
-    gene_membership, module = [],[]
-    for community in best_community:
-        if len(community) < threshold:
-            continue
-        else:
-            for gene in community:
-                gene = G.vs[gene]['name']
-                gene_membership.append(gene)
-                module.append(count)
-            count += 1
-    gene_membership = pd.DataFrame([gene_membership, module]).T
-    gene_membership.columns = ['genes','module']
+    groups = np.array(best_community.membership)
+    # organizing gene membership dataframe
+    genes = G.vs['name']
+    gene_membership = pd.DataFrame(np.array([genes,groups]).T, columns = ['genes','module'])
+
+    # remove small modules with 10 or fewer genes
+    gene_membership = remove_small_modules(gene_membership, min_module_size=threshold)
     return gene_membership
 
 
@@ -154,7 +187,8 @@ if __name__ == '__main__':
     #G_nx = nx.DiGraph(network)
     G = ig.Graph.TupleList([tuple(x) for x in network.values], directed = True)
     
-    gene_membership = GeneMemByMod(G, threshold=min_module_size, maxsize_threshold=max_module_size)
+    # gene_membership = GeneMemByMod_cpm(G, threshold=min_module_size, maxsize_threshold=max_module_size)
+    gene_membership = GeneMemByMod_optimizer(G, min_module_size=min_module_size, max_module_size=max_module_size, resolution_range=(0,0.01))
     
     print('module size stats: ')
     print(gene_membership.module.value_counts().describe())

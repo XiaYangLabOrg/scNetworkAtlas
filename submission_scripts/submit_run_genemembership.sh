@@ -25,7 +25,7 @@ then
     qsub -t 1:${num_networks} temp/shell_scripts/run_genemembership.sh ${network_dir} ${network_file} ${out_dir} ${min_module_size} ${max_module_size} ${network_ext}
 elif [ $submit_command = "bash" ]
 then
-    
+    mkdir -p "jobout/"
     bash temp/shell_scripts/run_genemembership_local.sh ${network_dir} ${network_file} ${out_dir} ${min_module_size} ${max_module_size} ${network_ext} "jobout/gene_memberships.$(date "+%m%d%Y.%s")"
 else
     echo "submit_command must be qsub or bash, not ${submit_command}"

@@ -1,4 +1,3 @@
-import decoupler as dc
 import pandas as pd
 import numpy as np
 import os
@@ -53,6 +52,7 @@ if pathway_file:
     db = pl.read_csv(pathway_file, separator="\t").rename({pathway_name_col:'PATHWAY', pathway_gene_col:"GENE"})
     db = db.group_by("PATHWAY").agg(pl.col("GENE").unique())
 elif args.use_msigdb and args.pathway:
+    import decoupler as dc
     msigdb = dc.get_resource("MSigDB")
     msigdb = pl.from_pandas(msigdb)
     msigdb = msigdb.filter(pl.col('collection') == pathway)

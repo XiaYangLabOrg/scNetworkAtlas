@@ -3,13 +3,10 @@
 
 import numpy as np
 import pandas as pd
-import sys
 import networkx as nx
 import leidenalg
 import igraph as ig
-import scanpy as sc
 import argparse
-import os
 
 
 

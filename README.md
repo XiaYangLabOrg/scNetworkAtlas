@@ -10,12 +10,12 @@ git pull origin
 cd ../
 ```
 
-
 Then, clone this repository.
 
 ```bash
 git clone https://github.com/XiaYangLabOrg/scNetworkAtlas.git
 cd scNetworkAtlas
+# Run only if you want to use the development version of the pipeline
 git checkout --track origin/scGRNdb.v1
 ```
 
@@ -32,7 +32,7 @@ Each project will be configured differently, so copy in a config and run_pipelin
 
 ```bash
 cp /path/to/scNetworkAtlas/config.py .
-cp /paty/to/scNetworkAtlas/run_pipeline.py .
+cp /path/to/scNetworkAtlas/run_pipeline.py .
 ```
 
 Note to those who have used previous versions of this repository:
@@ -51,19 +51,15 @@ To run any step, `<step>` of the SCING pipeline, run
 python3 run_pipeline.py <step>
 ```
 
-where `<step>` must be one of 
+where `<step>` must be one of
 
 - [`setup`](#setup)
 - [`cell_mapping`](#cell_mapping)
 - [`pseudobulking`](#pseudobulking-supercells)
 - [`build_grn`](#build_grn)
 - [`merge_networks`](#merge-networks)
-
-*In progress*
-
-- `gene_membership`
-- `annotations`
-- `process_annotations`
+- [`gene_membership`](#gene-membership)
+- [`pathway_enrichment`](#pathway-enrichment)
 
 ### Setup
 
@@ -73,7 +69,6 @@ Inputs:
 
 - `main_branch_path`: path to scNetworkAtlas
 - `base_dir`: for cell atlas projects, this is the cell atlas data directory. For other projects, this is your project directory
-- `conda_init_script`: path to conda.sh, normally /path/to/miniconda3/etc/profile.d/conda.sh
 
 ### Cell_mapping
 
@@ -125,51 +120,57 @@ Inputs:
 - `ncore`: number of cores used to build each network (default is 12)
 - `mem_per_core`: memory per core in GB (default is 4)
 
-### Gene_membership (In Progress)
+### Gene Membership
 
 This step performs module detection in the final network.
 
+Inputs:
 
-### Pathway Enrichment (In Progress)
+- `network_dir`: directory of networks
+- `network_file`: name of file to store all existing network paths. (If `network_ext` is txt, `network_file` must not end in txt)
+- `network_ext`: file extension of network files (Does not start with a period. For example, use `txt` not `.txt`)
+- `out_dir`: output directory
+- `min_module_size`: minimum module size
+- `max_module_size`: maximum module size
+- `submit_command`: submit command (either "qsub" to run on cluster or "bash" to run locally)
 
-This step performs pathway enrichment on modules
+### Pathway Enrichment
 
-<!-- 
-## Updates in Progress
+This step performs pathway enrichment on modules. It requires another conda environment called decoupler.
 
-## 05. submit_run_genemembership.sh
-inputs:
-- q1_module_sizes: desired module sizes (set as the 25th percentile)
-```
-bash submission_scripts/submit_run_genemembership.sh
-```
-
-## 06. submit_run_annotations.sh
-Must have R in your environment.
-```
-conda activate enrichr
-```
-
-inputs:
-- rerun: set to "True" or "False" depending on whether you are rerunning jobs that did not finish in time.
-- mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
-- modules_dir: directory of gene memberships created in previous script relative to atlas root directory (e.g. gene_memberships)
-- dbs: path to all pathway enrichment databases
-- intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- q1_module_sizes: desired module sizes (MUST MATCH from step 05)
-```
-bash submission_scripts/submit_run_annotations.sh
+```bash
+# ensure you are in base env
+conda create --name decoupler -c conda-forge decoupler polars pyarrow
+conda activate decoupler
 ```
 
-## 07. submit_run_processannotations.sh
-Must have R in your environment.
-```
-conda activate enrichr
-```
-inputs:
-- mode: set to "test" to run on one cell type at one parameter; set to "default" to run on all modules
-- intermediate_dir: directory where files of annotations for individual modules for each resolution will be stored
-- final_dir: directory where files of annotations of all modules within each resolution will be stored
-```
-bash submission_scripts/submit_run_processannotations.sh
-``` -->
+If you want to use your own pathway database file, run the `enrichment` step and edit the `enrichment` parameters in the config file. **NOTE**: Make sure that the module gene symbols match the pathway gene symbols. If your pathway file does not match your module's gene symbol format, the decoupler API offers gene symbol conversion here: https://decoupler-py.readthedocs.io/en/latest/generated/decoupler.translate_net.html. You can convert your modules, and proceed with this step.
+
+Inputs:
+
+- `module_dir`: directory of modules
+- `module_file`: name of file to store all existing module file paths (If module files are txt files, `module_file` must not end in txt)
+- `module_name_col`: module column name in module file
+- `module_gene_col`: gene column name in module file
+- `pathway_file`: pathway database file. Must be 2 columns
+- `pathway_db`: name of pathway database
+- `pathway_name_col`: pathway column name in pathway file
+- `pathway_gene_col`: gene column name in pathway file
+- `min_overlap`: minimum pathway-module overlap required for enrichment analysis
+- `pathway_size_min`: minimum pathway size
+- `pathway_size_max`: maximum pathway size
+- `out_dir`: output directory
+
+If you do not have a pathway database file, the decoupler python package provides an API for msigdb pathway databases. Run the `enrichment_decoupler` step and edit the `enrichment_decoupler` parameters in the config file
+
+Inputs:
+
+- `module_dir`: directory of modules
+- `module_file`: name of file to store all existing module file paths (If module files are txt files, `module_file` must not end in txt)
+- `module_name_col`: module column name in module file
+- `module_gene_col`: gene column name in module file
+- `pathway`: pathway name in decoupler API. Possible names are listed beneath this argument in `config.py`
+- `min_overlap`: minimum pathway-module overlap required for enrichment analysis
+- `pathway_size_min`: minimum pathway size
+- `pathway_size_max`: maximum pathway size
+- `out_dir`: output directory

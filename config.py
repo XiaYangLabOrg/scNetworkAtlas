@@ -29,7 +29,7 @@ scing_config = {
     'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
         'tissue_dir': 'tissue_adata',
         'supercell_dir':'supercells',
-        'tissue_celltype_file':'tissue_celltype_file.txt',        
+        'tissue_celltype_file':'tissue_celltype_file.txt',
         'celltype_col': 'Cell.Type',
         'sample_col': 'SampleID',
         'recluster': True, # TODO: not used yet

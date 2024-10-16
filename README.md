@@ -140,8 +140,10 @@ This step performs pathway enrichment on modules. It requires another conda envi
 
 ```bash
 # ensure you are in base env
-conda create --name decoupler -c conda-forge decoupler polars pyarrow
+cd /path/to/scNetworkAtlas
+conda env create --name decoupler install/decoupler_environment.yml
 conda activate decoupler
+cd /path/to/project_folder
 ```
 
 If you want to use your own pathway database file, run the `enrichment` step and edit the `enrichment` parameters in the config file. **NOTE**: Make sure that the module gene symbols match the pathway gene symbols. If your pathway file does not match your module's gene symbol format, the decoupler API offers gene symbol conversion here: https://decoupler-py.readthedocs.io/en/latest/generated/decoupler.translate_net.html. You can convert your modules, and proceed with this step.

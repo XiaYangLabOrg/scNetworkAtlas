@@ -1,0 +1,11 @@
+name: decoupler
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - conda-forge::decoupler-py
+  - conda-forge::polars
+  - ipykernel
+  - notebook
+  - conda-forge::pyarrow

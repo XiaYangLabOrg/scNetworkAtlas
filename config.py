@@ -28,7 +28,7 @@ scing_config = {
     'pseudobulking_v2': { # note: only use h5ad in pseudobulking v2
         'tissue_dir': 'tissue_adata',
         'supercell_dir':'supercells',
-        'tissue_celltype_file':'tissue_celltype_file.txt',        
+        'tissue_celltype_file':'tissue_celltype_file.txt',
         'celltype_col': 'Cell.Type',
         'sample_col': 'SampleID',
         'recluster': True, # TODO: not used yet
@@ -57,7 +57,7 @@ scing_config = {
         'out_dir': 'gene_memberships',
         "min_module_size": 10,
         "max_module_size": 300,
-        "submit_command": "qsub", # qsub or bash
+        "submit_command": "bash", # qsub or bash
         
     },
     'enrichment':{
@@ -65,14 +65,15 @@ scing_config = {
         'module_file': 'gene_membership_files',
         'module_name_col': 'module',
         'module_gene_col': 'genes',
-        'pathway_file': '/u/project/xyang123/shared/reference/pathways/human/GO_BP_Hs.txt',
-        'pathway_db': 'GO_BP',
+        'pathway_file': ['/u/project/xyang123/shared/reference/pathways/human/GO_BP_Hs.txt','/u/project/xyang123/shared/reference/pathways/human/DisGeNET.txt'],
+        'pathway_db': ['GO_BP','DisGeNET'],
         'pathway_name_col': 'MODULE',
         'pathway_gene_col': 'GENE',
-        'min_overlap': 5,
+        'min_overlap': 10,
         "pathway_size_min": 10,
         "pathway_size_max": 500,
-        'out_dir': 'enrichment'
+        'out_dir': 'enrichment',
+        'submit_command': 'bash', # qsub or bash
 
 
     },
@@ -81,11 +82,12 @@ scing_config = {
         'module_file': 'gene_membership_files',
         'module_name_col': 'module',
         'module_gene_col': 'genes',
-        "pathway": "go_biological_process",
-        'min_overlap': 5,
+        "pathway": ["go_biological_process","go_molecular_function"],
+        'min_overlap': 10,
         "pathway_size_min": 10,
         "pathway_size_max": 500,
-        'out_dir': 'enrichment_decoupler'
+        'out_dir': 'enrichment_decoupler',
+        'submit_command': 'bash', # qsub or bash
         # choice:
         # chemical_and_genetic_perturbations immunesigdb mirna_targets_mirdb go_molecular_function tf_targets_gtrf tf_targets_legacy oncogenic_signatures cell_type_signatures vaccine_response go_biological_process cancer_gene_neighborhoods 
         # cancer_modules go_cellular_component wikipathways reactome_pathways hallmark mirna_targets_legacy biocarta_pathways positional human_phenotype_ontology pid_pathways kegg_pathways

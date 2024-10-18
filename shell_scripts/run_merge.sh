@@ -14,7 +14,7 @@ do
 	if [ $SGE_TASK_ID = $counter ]
 	then 
 		echo $counter
-		out_file=$out_dir/${line}.${consensus}.csv.gz
+		out_file=$out_dir/${line}.${consensus}.txt
 		if [ -f "$out_file" ]; then
 			sleep 10m
 			exit

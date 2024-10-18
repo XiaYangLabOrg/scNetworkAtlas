@@ -120,6 +120,12 @@ def confirm_conda_activated(conda_env='scing'):
         print(f'{conda_env} environment is activated')
         return True
 
+def join_list_arg(l):
+    # combine list argument to string
+    if isinstance(l, list):
+        return ','.join(map(str,l))
+    else:
+        return str(l)
 
 def cell_mapping():
     confirm_conda_activated()
@@ -153,7 +159,7 @@ def merge_networks():
     confirm_conda_activated()
 
     config = scing_config['merge_networks']
-    consensus_str = ','.join(map(str, config['consensus'])) # pass as string to submission script
+    consensus_str = join_list_arg(config['consensus']) # pass as string to submission script
     cmd = f"bash temp/submission_scripts/submit_run_merge.sh {config['supercell_dir']} {config['supercell_file']} {config['intermediate_dir']} {consensus_str} {config['out_dir']} {config['ncore']} {config['mem_per_core']}"
     os.system(cmd)
 
@@ -168,14 +174,19 @@ def enrichment():
     confirm_conda_activated(conda_env='decoupler')
     
     config = scing_config['enrichment']
-    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {config['pathway_file']} {config['pathway_db']} {config['pathway_name_col']} {config['pathway_gene_col']} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']}"
+    pathway_file_str = join_list_arg(config['pathway_file'])
+    pathway_db_str = join_list_arg(config['pathway_db'])
+    # must be same number of pathway files as pathway db names
+    assert len(pathway_file_str.split(',')) == len(pathway_db_str.split(',')), 'Error. Must have same number of pathway files as pathway dbs'
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {pathway_file_str} {pathway_db_str} {config['pathway_name_col']} {config['pathway_gene_col']} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']} {config['submit_command']}"
     os.system(cmd)
 
 def enrichment_decoupler():
     confirm_conda_activated(conda_env='decoupler')
     
     config = scing_config['enrichment_decoupler']
-    cmd = f"bash temp/submission_scripts/submit_run_enrichment_decoupler.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {config['pathway']} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']}"
+    pathway_str = join_list_arg(config['pathway'])
+    cmd = f"bash temp/submission_scripts/submit_run_enrichment_decoupler.sh {config['module_dir']} {config['module_file']} {config['module_name_col']} {config['module_gene_col']} {pathway_str} {config['min_overlap']} {config['pathway_size_min']} {config['pathway_size_max']} {config['out_dir']} {config['submit_command']}"
     os.system(cmd)
 
 

@@ -154,14 +154,16 @@ Inputs:
 - `module_file`: name of file to store all existing module file paths (If module files are txt files, `module_file` must not end in txt)
 - `module_name_col`: module column name in module file
 - `module_gene_col`: gene column name in module file
-- `pathway_file`: pathway database file. Must be 2 columns
-- `pathway_db`: name of pathway database
+- `pathway_file`: pathway database file. Must be 2 columns. If you want to include multiple pathway files, add them as a list (e.g. `['file1.txt','file2.txt']`)
+- `pathway_db`: name of pathway database. Each pathway_file must have a pathway_db name. (e.g. `['pathway_db1','pathway_db2']`)
 - `pathway_name_col`: pathway column name in pathway file
 - `pathway_gene_col`: gene column name in pathway file
 - `min_overlap`: minimum pathway-module overlap required for enrichment analysis
 - `pathway_size_min`: minimum pathway size
 - `pathway_size_max`: maximum pathway size
 - `out_dir`: output directory
+- `submit_command`: submit command (either "qsub" to run on cluster or "bash" to run locally)
+
 
 If you do not have a pathway database file, the decoupler python package provides an API for msigdb pathway databases. Run the `enrichment_decoupler` step and edit the `enrichment_decoupler` parameters in the config file
 
@@ -171,8 +173,10 @@ Inputs:
 - `module_file`: name of file to store all existing module file paths (If module files are txt files, `module_file` must not end in txt)
 - `module_name_col`: module column name in module file
 - `module_gene_col`: gene column name in module file
-- `pathway`: pathway name in decoupler API. Possible names are listed beneath this argument in `config.py`
+- `pathway`: pathway name in decoupler API. Possible names are listed beneath this argument in `config.py`. If you want to include multiple pathway files, add them as a list (e.g. `['pathway1','pathway2']`)
 - `min_overlap`: minimum pathway-module overlap required for enrichment analysis
 - `pathway_size_min`: minimum pathway size
 - `pathway_size_max`: maximum pathway size
 - `out_dir`: output directory
+- `submit_command`: submit command (either "qsub" to run on cluster or "bash" to run locally)
+

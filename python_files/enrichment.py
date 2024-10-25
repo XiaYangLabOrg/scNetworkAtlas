@@ -104,12 +104,15 @@ if len(score_di.keys())>0:
                         pl.col("overlap_genes").list.join(separator=";"))
         final_PE = pl.concat([final_PE, x], how='vertical')
     print(final_PE.head())
-    final_PE = final_PE[["MODULE", "PATHWAY", "P", "FDR" , "risk_ratio", "overlap", "pathway_size", "module_size", "overlap_genes"]].sort("FDR")
+    final_PE = final_PE[["MODULE", "PATHWAY", "P", "FDR" , "risk_ratio", "overlap", "pathway_size", "module_size", "overlap_genes"]]
+    final_PE = pd.DataFrame(final_PE)
+    final_PE.columns = ["MODULE", "PATHWAY", "P", "FDR" , "risk_ratio", "overlap", "pathway_size", "module_size", "overlap_genes"]
+    final_PE = final_PE.sort_values("FDR")
 
     if out_file.split(".")[-1] == "txt" or out_file.split(".")[-1] == "tsv":
-        final_PE.write_csv(out_file, separator="\t")
+        final_PE.to_csv(out_file, sep="\t")
     else:
-        final_PE.write_csv(out_file)
+        final_PE.to_csv(out_file)
 else:
     if pathway_file:
         print(f'no pathway enrichment result from {pathway_file} for {module_file}')

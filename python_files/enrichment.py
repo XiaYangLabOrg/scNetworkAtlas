@@ -110,9 +110,9 @@ if len(score_di.keys())>0:
     final_PE = final_PE.sort_values("FDR")
 
     if out_file.split(".")[-1] == "txt" or out_file.split(".")[-1] == "tsv":
-        final_PE.to_csv(out_file, sep="\t")
+        final_PE.to_csv(out_file, sep="\t", index=False)
     else:
-        final_PE.to_csv(out_file)
+        final_PE.to_csv(out_file, index=False)
 else:
     if pathway_file:
         print(f'no pathway enrichment result from {pathway_file} for {module_file}')

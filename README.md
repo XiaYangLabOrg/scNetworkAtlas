@@ -141,7 +141,7 @@ This step performs pathway enrichment on modules. It requires another conda envi
 ```bash
 # ensure you are in base env
 cd /path/to/scNetworkAtlas
-conda env create --name decoupler install/decoupler_environment.yml
+conda env create --name decoupler --file install/decoupler_env.yml
 conda activate decoupler
 cd /path/to/project_folder
 ```

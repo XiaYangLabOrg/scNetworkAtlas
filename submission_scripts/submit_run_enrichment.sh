@@ -17,8 +17,8 @@ out_dir=${12}
 submit_command=${13}
 ##################
 
-IFS=',' read -r -a pathway_file_array <<< $pathway_file
-IFS=',' read -r -a pathway_db_array <<< $pathway_db
+IFS=',' read -r -a pathway_file_array <<< "$pathway_file"
+IFS=',' read -r -a pathway_db_array <<< "$pathway_db"
 
 if [ ! -f ${module_dir}/${module_file} ]
 then

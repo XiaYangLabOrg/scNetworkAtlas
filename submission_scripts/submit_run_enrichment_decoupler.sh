@@ -14,7 +14,7 @@ out_dir=$9
 submit_command=${10}
 ##################
 
-IFS=',' read -r -a pathway_array <<< $pathway
+IFS=',' read -r -a pathway_array <<< "$pathway"
 if [ ! -f ${module_dir}/${module_file} ]
 then
     ls ${module_dir}| grep txt | awk -F'.txt' '{print $1}' > ${module_dir}/${module_file}

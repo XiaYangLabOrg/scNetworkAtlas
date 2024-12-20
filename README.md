@@ -1,5 +1,3 @@
-SCING GRN Construction and scGRNdb Network Analysis Pipeline
-
 # SCING Pipeline
 
 ## Installing the Pipeline

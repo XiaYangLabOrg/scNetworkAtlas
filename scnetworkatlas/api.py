@@ -107,7 +107,12 @@ def run_gene_membership(config: GeneMembershipConfig) -> GeneMembershipResult:
             written. Parent directory must exist. Output format is
             inferred from the extension (``.csv`` → comma-separated;
             anything else → tab-separated). Two columns are written:
-            ``genes`` and ``module``.
+            ``genes`` and ``module`` (both lowercase). Downstream
+            ``run_enrichment`` consumes this file and defaults its
+            ``module_name_col`` / ``module_gene_col`` to match these
+            exact lowercase headers; the pathway-file side of that
+            function uses uppercase headers — see that function's
+            docstring for why.
         ``min_module_size`` : int
             Minimum module size (genes) — modules below this are
             dropped. Typical: 10.
@@ -207,6 +212,21 @@ def run_enrichment(config: EnrichmentConfig) -> EnrichmentResult:
         ``module_gene_col`` : str = ``"genes"``
         ``pathway_name_col`` : str = ``"MODULE"``
         ``pathway_gene_col`` : str = ``"GENE"``
+
+        Why do ``module_name_col`` and ``pathway_name_col`` share the
+        letters "module" / "MODULE" in different cases? Historical
+        artifact. The default ``"module"`` (lowercase) matches the
+        literal column header emitted by ``run_gene_membership``. The
+        default ``"MODULE"`` (uppercase) matches the literal column
+        header used by every pathway-DB file shipped under
+        ``scGRNdb/Data/pathways/`` — where "MODULE" names the pathway
+        (e.g. ``GOBP_GLYCOLYTIC_PROCESS``), not a graph-cluster.
+        Internally, both are renamed to distinct canonical names
+        (``MODULE`` vs. ``PATHWAY``) before the hypergeometric test
+        runs. If you supply your own pathway file with differently-
+        named columns, pass ``pathway_name_col`` / ``pathway_gene_col``
+        explicitly.
+
         ``min_overlap`` : int = ``10``
             Note: the legacy ``enrichment.py`` argparse default is
             ``5``; this wrapper uses ``10`` to match the

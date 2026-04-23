@@ -7,6 +7,15 @@ argparse shim that delegates to ``run(...)``; ``python enrichment.py
 
 Algorithm: per-module hypergeometric test of (module ∩ pathway) over a
 fixed background, then per-module FDR (BH) correction. Sort by FDR.
+
+Output determinism: the ``overlap_genes`` column is sorted
+lexicographically within each (module, pathway) row so that outputs
+are byte-for-byte reproducible across Python processes. Earlier
+versions of this script used ``list(set(...) & set(...))``, which
+was sensitive to the per-process hash-randomization seed and
+produced different (but equivalent) gene orderings on each run.
+Numerical columns (P, FDR, risk_ratio, overlap, sizes) are
+unaffected.
 """
 
 from __future__ import annotations
@@ -86,7 +95,7 @@ def run(
         mod_PE = db.with_columns(
             pl.col("GENE")
             .map_elements(
-                lambda x: list(set(mod_genes) & set(x)),
+                lambda x: sorted(set(mod_genes) & set(x)),
                 return_dtype=pl.List(pl.String),
             )
             .alias("overlap_genes"),

@@ -248,6 +248,17 @@ def run_enrichment(config: EnrichmentConfig) -> EnrichmentResult:
     """
     _require_keys(config, _ENRICHMENT_REQUIRED, "run_enrichment")
 
+    unknown = (
+        set(config.keys())
+        - set(_ENRICHMENT_REQUIRED)
+        - set(_ENRICHMENT_OPTIONAL_DEFAULTS.keys())
+    )
+    if unknown:
+        raise KeyError(
+            f"run_enrichment: unknown config keys: {sorted(unknown)}. "
+            f"Allowed: {sorted(set(_ENRICHMENT_REQUIRED) | set(_ENRICHMENT_OPTIONAL_DEFAULTS.keys()))}"
+        )
+
     module_file = config["module_file"]
     pathway_file = config["pathway_file"]
     out_file = config["out_file"]
@@ -260,17 +271,6 @@ def run_enrichment(config: EnrichmentConfig) -> EnrichmentResult:
     for key in _ENRICHMENT_OPTIONAL_DEFAULTS:
         if key in config:
             kwargs[key] = config[key]
-
-    unknown = (
-        set(config.keys())
-        - set(_ENRICHMENT_REQUIRED)
-        - set(_ENRICHMENT_OPTIONAL_DEFAULTS.keys())
-    )
-    if unknown:
-        raise KeyError(
-            f"run_enrichment: unknown config keys: {sorted(unknown)}. "
-            f"Allowed: {sorted(set(_ENRICHMENT_REQUIRED) | set(_ENRICHMENT_OPTIONAL_DEFAULTS.keys()))}"
-        )
 
     from scnetworkatlas.python_files.enrichment import run as _run
 

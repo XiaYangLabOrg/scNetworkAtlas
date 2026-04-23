@@ -7,10 +7,10 @@ main_branch_path = "/u/scratch/m/mikechen/scNetworkAtlas/"
 base_dir = "/u/project/xyang123/shared/reference/single_cell_databases/"
 
 scing_config = {
-    'copy_cmds': 
+    'copy_cmds':
             [f"cp -r {main_branch_path}shell_scripts/* temp/shell_scripts/",
              f"cp -r {main_branch_path}submission_scripts/* temp/submission_scripts/",
-             f"cp -r {main_branch_path}python_files/* temp/python_files/"],
+             f"cp -r {main_branch_path}scnetworkatlas/python_files/* temp/python_files/"],
         
     'cell_mapping': {
         'base_dir': base_dir,

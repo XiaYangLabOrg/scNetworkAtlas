@@ -12,12 +12,8 @@ Public surface (see ``scnetworkatlas.api`` for full docs):
     run_enrichment(config: dict) -> dict        # ≡ run_pipeline.py enrichment
 
 The underlying algorithms are unchanged — these wrappers call the same
-functions in ``python_files/`` that ``run_pipeline.py`` calls today via
-its bash shims.
-
-Status: SKELETON. Function bodies raise ``NotImplementedError``. The
-implementation will land in a follow-up commit on this branch
-(``secure-backend``) once the wrapper API shape is reviewed.
+functions in ``scnetworkatlas/python_files/`` that ``run_pipeline.py``
+calls today via its bash shims.
 """
 
 from scnetworkatlas.api import run_gene_membership, run_enrichment

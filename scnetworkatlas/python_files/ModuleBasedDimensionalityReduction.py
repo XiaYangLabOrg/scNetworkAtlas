@@ -160,38 +160,48 @@ def GeneMemByMod_cpm(G, threshold = 10, maxsize_threshold=300, resolutions=list(
     return gene_membership
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Module Detection")
-    parser.add_argument('input', type=str, help='path to network file')
-    parser.add_argument('output', type=str, help='output filename')
-    parser.add_argument('min_module_size', type=int, default = 10, help='threshold fot minimum module size')
-    parser.add_argument('max_module_size', type=int, default = 300, help='threshold fot maximum module size')
-    
-    args = parser.parse_args()
-    input = args.input
-    output = args.output
-    min_module_size = args.min_module_size
-    max_module_size = args.max_module_size
-    
+def run(input, output, min_module_size, max_module_size):
+    """Module detection on a single network file. Public callable.
+
+    Mirrors the legacy ``__main__`` block; the ``__main__`` shim below
+    now just parses CLI args and calls this function so legacy callers
+    (``shell_scripts/run_genemembership_local.sh``) continue to work.
+
+    Returns the gene-membership DataFrame (also written to ``output``).
+    """
     if input.endswith('txt'):
         network = pd.read_csv(input, sep='\t')
     elif input.endswith('csv') or input.endswith('csv.gz'):
         network = pd.read_csv(input)
     else:
-        print('File must be txt or csv')
-        exit()
-    #G_nx = nx.DiGraph(G.get_edgelist())
-    #G_nx = nx.DiGraph(network)
-    G = ig.Graph.TupleList([tuple(x) for x in network.values], directed = True)
-    
-    # gene_membership = GeneMemByMod_cpm(G, threshold=min_module_size, maxsize_threshold=max_module_size)
-    gene_membership = GeneMemByMod_optimizer(G, min_module_size=min_module_size, max_module_size=max_module_size, resolution_range=(0,0.01))
-    
+        raise ValueError(f"network file must be .txt, .csv, or .csv.gz: {input}")
+
+    G = ig.Graph.TupleList([tuple(x) for x in network.values], directed=True)
+
+    gene_membership = GeneMemByMod_optimizer(
+        G,
+        min_module_size=min_module_size,
+        max_module_size=max_module_size,
+        resolution_range=(0, 0.01),
+    )
+
     print('module size stats: ')
     print(gene_membership.module.value_counts().describe())
-    
+
     if output.endswith('.csv'):
         gene_membership.to_csv(output, index=False)
     else:
         gene_membership.to_csv(output, index=False, sep='\t')
-    
+
+    return gene_membership
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Module Detection")
+    parser.add_argument('input', type=str, help='path to network file')
+    parser.add_argument('output', type=str, help='output filename')
+    parser.add_argument('min_module_size', type=int, default=10, help='threshold fot minimum module size')
+    parser.add_argument('max_module_size', type=int, default=300, help='threshold fot maximum module size')
+
+    args = parser.parse_args()
+    run(args.input, args.output, args.min_module_size, args.max_module_size)

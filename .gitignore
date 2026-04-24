@@ -11,3 +11,6 @@ combined_networks/
 mock_new_project/python_files
 mock_new_project/shell_scripts
 mock_new_project/submission_scripts
+
+# local Python virtual environment
+.venv/
